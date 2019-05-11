@@ -1,0 +1,1 @@
+This is a short description of the PID controlled pendulum project.
