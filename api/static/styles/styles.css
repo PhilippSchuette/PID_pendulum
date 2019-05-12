@@ -1,5 +1,5 @@
-body {
-    background-color: #ddd;
+.body__regular-paragraph {
+    font-size: 1.1rem;
 }
 
 /* override some Bootstrap defaults */
@@ -10,4 +10,8 @@ body {
 
 .navbar-brand {
     font-size: 1.7rem !important;
+}
+
+.background-colored {
+    background-color: #fff !important; /* #fff is Bootstrap's bg color */
 }

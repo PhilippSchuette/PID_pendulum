@@ -10,15 +10,15 @@ This is a short description of the PID controlled pendulum project. The project 
 
 - incomplete system information.
 
-Many additional features will be added in the future.
+Additional features will be added in the future.
 
 ## Web API and Demonstration
-A demonstration of this PID pendulum controller implementation will be available soon. To run the web app locally, `pip install flask` and run:
+A demonstration of the PID pendulum controller implementation will be available soon. To run the web app locally, `pip install flask` and run:
 
 ```bash
 cd api
-flask run # visit localhost:5000 in a web browser
+flask run # now, visit localhost:5000 in a web browser
 ```
 
 ## License
-The code in this repository is GPL-3.0 licensed.
+The code in this repository is [GPL-3.0 licensed](./LICENSE.md). `html` and `css` files are not distributed under any license if not specified otherwise.

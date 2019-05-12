@@ -1,9 +1,11 @@
-# PID control for inverted pendulum.  Control is implemented as a class,
+#!/bin/python
+#
+# PID control for inverted pendulum. Control is implemented as a class,
 # such that other systems/ODE can be controlled without much additional
 # effort.
 # Several phenomena present in real world control applications are also
 # implemented, such as bounded maximal control, limited controller
-# speed and limited access to system variables.  A random, but constant
+# speed and limited access to system variables. A random, but constant
 # noise perturbes the system.
 #
 # Further features include the possibility to switch between linearized
@@ -11,7 +13,8 @@
 # control parameters with respect to multiple optimality criteria.
 #
 # Author: Philipp Schuette
-# Date: 20.04.2019
+# License: GPL-3.0
+# Date: 20/04/2019
 
 
 import matplotlib.pyplot as plt
@@ -301,8 +304,8 @@ class Pendulum():
         for n in range(1, N):
             # Calculate the current control value:
             u_n = self.controller.total_output(self.phi[n-1], self.phi[n],
-                                         self.t[n-1], self.t[n],
-                                         precision=precision)
+                                               self.t[n-1], self.t[n],
+                                               precision=precision)
 
             # Save control values for control value plot:
             self.output_array.append(u_n)
