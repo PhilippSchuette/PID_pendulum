@@ -213,7 +213,7 @@ class Pendulum():
     ODE is of the form x''(t) = f(x(t)) + u(t).
     """
 
-    def __init__(self, t_start, t_end, N, f):
+    def __init__(self, t_start, t_end, N, f, L=0.1, G=9.81):
         """
         Initialize second order ODE solver for given time parameters t_start,
         t_end, number of support points N.  Initial values are given to the
@@ -231,6 +231,10 @@ class Pendulum():
 
         - f: Right hand side for the second order pendulum ODE (funtion).
 
+        - L: Pendulum length parameter in [m] (float > 0).
+
+        - G: Gravitational constant in [m/s^2] (float > 0).
+
         OUTPUT:
 
         - Object representing the second order ODE with right hand side f.
@@ -239,6 +243,8 @@ class Pendulum():
         self.t_end = t_end
         self.N = N
         self.f = f
+        self.L = L
+        self.G = G
 
         # Calculate time step width:
         self.h = (t_end - t_start)/N
@@ -324,9 +330,8 @@ class Pendulum():
             )
             self.I_array.append(self.controller.integral)
 
-            # After the following calculation, tmp contains the entry
-            # phi[n + 1]:
-            tmp = (2.0*self.phi[n] + self.f(self.phi[n])*self.h**2
+            # After this calculation, tmp contains the angle value phi[n+1]:
+            tmp = (2.0*self.phi[n] + self.L*self.G*self.f(self.phi[n])*self.h**2
                    - self.phi[n-1] + u_n*self.h**2)
             self.phi.append(tmp)
 
@@ -530,6 +535,7 @@ if __name__ == '__main__':
     t_start = 0.0
     t_end = 45.0
     N = 9000
+    LENGTH = 0.1
 
     # Perturbation could perhaps be randomized;  something like (0.01*np.pi)
     # seems to be a good value for this particular parameter set.
@@ -537,8 +543,8 @@ if __name__ == '__main__':
     f1 = np.sin
 
     def f2(x): return x + PERTURBATION
-    # The following is am unused prototype for a perturbed nonlinear pendulum:
 
+    # The following is am unused prototype for a perturbed nonlinear pendulum:
     def f3(x): return np.sin(x) + PERTURBATION
 
     phi0 = 0.5 * np.pi
@@ -547,12 +553,12 @@ if __name__ == '__main__':
     # After specifying all necessary data, the Pendulum class solves the ODE
     # within three statements:  creation of an appropriate Pendulum instance,
     # a call to the solve() method and a call to the plot() method:
-    ode1 = Pendulum(t_start, t_end, N, f1)
+    ode1 = Pendulum(t_start, t_end, N, f1, L=LENGTH)
     ode1.solve(phi0, phi0_dot, ALPHA, BETA, MU, MAX_CONTROL, FREQUENCY,
                DEADBAND, SET_POINT, PRECISION)
     ode1.plot("nonlinearPID", parameter=True)
 
-    ode2 = Pendulum(t_start, t_end, N, f2)
+    ode2 = Pendulum(t_start, t_end, N, f2, L=LENGTH)
     ode2.solve(phi0, phi0_dot, ALPHA, BETA, MU, MAX_CONTROL, FREQUENCY,
                DEADBAND, SET_POINT, PRECISION)
     ode2.plot("linearPID", parameter=True)
@@ -567,6 +573,4 @@ if __name__ == '__main__':
 # TODO: Implement integral anti-windup (deactivate integrator, if difference
 #       between system value and set point is too small)?
 # TODO: Implement (in ODE) friction.
-# TODO: Include physical parameters pendulum length (L), gravitational constant
-#       (G)!
 ###############################################################################
