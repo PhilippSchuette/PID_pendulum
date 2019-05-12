@@ -211,7 +211,8 @@ class Pendulum():
         Initialize second order ODE solver for given time parameters t_start,
         t_end, number of support points N.  Initial values are given to the
         solve method for flexibility in calculating solutions for different
-        initial conditions.
+        initial conditions.  Right hand side can be adjusted, even though sine
+        and identity are the most reasonable choices.
 
         INPUT:
 
