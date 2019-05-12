@@ -54,10 +54,11 @@ class PIDControl():
 
         - max_control: Controller output bound (float > 0).
 
-        - set_point: Desired value of controlled system (float).
+        - set_point: Desired value of controlled system
+                     (0 <= float <= 2*pi).
 
         - deadband: Minimum difference between calculated control outputs
-                    (float).
+                    (float > 0).
 
         OUTPUT:
 
