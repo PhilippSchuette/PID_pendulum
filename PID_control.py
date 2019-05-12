@@ -328,7 +328,8 @@ class Pendulum():
             self.I_array.append(self.controller.integral)
 
             # After this calculation, tmp contains the angle value phi[n+1]:
-            tmp = (2.0*self.phi[n] + self.L*self.G*self.f(self.phi[n])*self.h**2
+            tmp = (2.0*self.phi[n]
+                   + self.L*self.G*self.f(self.phi[n])*self.h**2
                    - self.phi[n-1] + u_n*self.h**2)
             self.phi.append(tmp)
 
