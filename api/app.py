@@ -1,17 +1,6 @@
-import flask
-from flask import jsonify, request
+from flask import Flask, jsonify, request
 
-app = flask.Flask(__name__)
-app.config["DEBUG"] = True
-
-# TODO: call the methods here
-
-
-@app.route("/", methods=["GET"])
-def home():
-    return """
-<h1>Hello Python!</h1>
-"""
+app = Flask(__name__, static_url_path="/static")
 
 
 @app.route("/api/v1/", methods=["GET"])
@@ -32,6 +21,7 @@ def api():
         - deadband
         - set_point
         - precision
+    Maybe make this a singleton?
     """
     params = []
     params.append("something")
@@ -39,5 +29,10 @@ def api():
         return jsonify("You provided {}.".format(request.args["id"]))
 
 
+@app.route("/")
+def home():
+    return app.send_static_file("index.html")
+
+
 if __name__ == "__main__":
-    app.run()
+    app.run(debug=True)

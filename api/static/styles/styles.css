@@ -1,0 +1,13 @@
+body {
+    background-color: #ddd;
+}
+
+/* override some Bootstrap defaults */
+.navbar {
+    height: 90px !important;
+    font-size: 1.4rem !important;
+}
+
+.navbar-brand {
+    font-size: 1.7rem !important;
+}
