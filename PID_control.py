@@ -100,6 +100,10 @@ class PIDControl():
         - t2: current time point (float).
 
         - precision: system measurement precision (int > 0).
+
+        OUTPUT:
+
+        - Total control value.
         """
         if (self.action == 0):
             control_value = (
@@ -118,6 +122,7 @@ class PIDControl():
                     self.output = control_value
 
         self.action = (self.action + 1) % self.frequency
+        return(self.output)
 
     def proportional_output(self, x, t):
         """
@@ -129,6 +134,10 @@ class PIDControl():
         - x: system value at time t (float).
 
         - t: current time point (float).
+
+        OUTPUT:
+
+        - Proportional control value.
         """
         control_value = -self.alpha * (x - self.set_point)
 
@@ -150,6 +159,10 @@ class PIDControl():
         - t1: last time point (float).
 
         - t2: current time point (float).
+
+        OUTPUT:
+
+        - Derivative control value.
         """
         control_value = -self.beta*(x2 - x1)/(t2 - t1)
 
@@ -170,6 +183,10 @@ class PIDControl():
         - t1: last time point (float).
 
         - t2: current time point (float).
+
+        OUTPUT:
+
+        - Integral control value.
         """
         control_value = (self.integral - self.mu*(t2 - t1)
                          * (x1 - self.set_point + x2 - self.set_point)/2.0)
@@ -182,7 +199,7 @@ class PIDControl():
 # Controlled Pendulum ODE Solver #
 ##################################
 
-class ODESolver():
+class Pendulum():
     """
     Class implementation of a simple ODE solver for the inverted pendulum.
     Intended to be used in conjunction with the PIDControl class.  The solved
@@ -282,10 +299,9 @@ class ODESolver():
         # Integrate the controlled ODE:
         for n in range(1, N):
             # Calculate the current control value:
-            self.controller.total_output(self.phi[n-1], self.phi[n],
+            u_n = self.controller.total_output(self.phi[n-1], self.phi[n],
                                          self.t[n-1], self.t[n],
                                          precision=precision)
-            u_n = self.controller.output
 
             # Save control values for control value plot:
             self.output_array.append(u_n)
@@ -306,7 +322,7 @@ class ODESolver():
 
     def plot(self, file_name, parameter=False):
         """
-        Method to plot solutions generated with ODESolver class. PID Parameters
+        Method to plot solutions generated with Pendulum class. PID Parameters
         can be written in the filename.  This might be useful for numerical
         experiments with several distinct sets of parameters.
 
@@ -425,15 +441,15 @@ if __name__ == '__main__':
     phi0 = 0.5 * np.pi
     phi0_dot = 0.3 * np.pi
 
-    # After specifying all necessary data, the ODESolver class solves the ODE
-    # within three statements:  creation of an appropriate ODESolver instance,
+    # After specifying all necessary data, the Pendulum class solves the ODE
+    # within three statements:  creation of an appropriate Pendulum instance,
     # a call to the solve() method and a call to the plot() method:
-    ode1 = ODESolver(t_start, t_end, N, f1)
+    ode1 = Pendulum(t_start, t_end, N, f1)
     ode1.solve(phi0, phi0_dot, ALPHA, BETA, MU, MAX_CONTROL, FREQUENCY,
                DEADBAND, SET_POINT, PRECISION)
     ode1.plot("nonlinearPID", parameter=True)
 
-    ode2 = ODESolver(t_start, t_end, N, f2)
+    ode2 = Pendulum(t_start, t_end, N, f2)
     ode2.solve(phi0, phi0_dot, ALPHA, BETA, MU, MAX_CONTROL, FREQUENCY,
                DEADBAND, SET_POINT, PRECISION)
     ode2.plot("linearPID", parameter=True)
