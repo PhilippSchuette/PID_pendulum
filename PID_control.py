@@ -2,7 +2,7 @@
 # such that other systems/ODE can be controlled without much additional
 # effort.
 # Several phenomena present in real world control applications are also
-# implemented, such as bounded maximal control, limited controller 
+# implemented, such as bounded maximal control, limited controller
 # speed and limited access to system variables.  A random, but constant
 # noise perturbes the system.
 #
@@ -14,28 +14,30 @@
 # Date: 20.04.2019
 
 
-import numpy as np
 import matplotlib.pyplot as plt
-
+import numpy as np
 
 ##################
 # PID Controller #
 ##################
 
+
 class PIDControl():
     """
-    Class implementation of a PID controller. 
+    Class implementation of a PID controller.
     """
-    def __init__(self, alpha, beta, mu, frequency, max_control, set_point, deadband):
+
+    def __init__(self, alpha, beta, mu, frequency,
+                 max_control, set_point, deadband):
         """
         Initialize PID controller from given data like parameters for P, I and
         D, controller speed with respect to the modelled system and a bound for
         controller ouput.  Especially the latter two are quite important in
-        practical applications.  The set point, that the controller tries to reach,
-        can also be adjusted manually.  A parameter deadband reduces strain on
-        possible machinery behind the controller; the control output is only changed,
-        if the newly calculated output differs from the previous one by at least
-        the amount specified by deadband.
+        practical applications.  The set point, that the controller tries to
+        reach, can also be adjusted manually.  A parameter deadband reduces
+        strain on possible machinery behind the controller; the control output
+        is only changed, if the newly calculated output differs from the
+        previous one by at least the amount specified by deadband.
 
         INPUT:
 
@@ -51,7 +53,8 @@ class PIDControl():
 
         - set_point: Desired value of controlled system (float).
 
-        - deadband: Minimum difference between calculated control outputs (float).
+        - deadband: Minimum difference between calculated control outputs
+                    (float).
 
         OUTPUT:
 
@@ -66,10 +69,12 @@ class PIDControl():
         self.set_point = set_point
         self.deadband = deadband
 
-        # Attribute to memorize the previous or latest change in controller output:
+        # Attribute to memorize the previous or latest change in controller
+        # output:
         self.output = 0
 
-        # Attribute to memorize the integral control value up to the current time:
+        # Attribute to memorize the integral control value up to the current
+        # time:
         self.integral = 0
 
         # Attribute to keep track of controller speed:
@@ -77,11 +82,12 @@ class PIDControl():
 
     def total_output(self, x1, x2, t1, t2, precision=4):
         """
-        Method returning the total controller output in response to system value x
-        at time t.  The output is bounded by the max_control attribute and controller
-        adjustment speed is bounded by the frequency attribute.  Controller does not
-        adjust, if successive outputs differ by less than the deadband attribute.
-        Limited measurement precision is included by rounding controller input.
+        Method returning the total controller output in response to system
+        value x at time t.  The output is bounded by the max_control attribute
+        and controller adjustment speed is bounded by the frequency attribute.
+        Controller does not adjust, if successive outputs differ by less than
+        the deadband attribute. Limited measurement precision is included by
+        rounding controller input.
 
         INPUT:
 
@@ -96,11 +102,13 @@ class PIDControl():
         - precision: system measurement precision (int > 0).
         """
         if (self.action == 0):
-            control_value = (self.proportional_output(np.round(x2, precision), t2)
-                             + self.derivative_output(np.round(x1, precision),
-                                                      np.round(x2, precision), t1, t2)
-                             + self.integral_output(np.round(x1, precision),
-                                                    np.round(x2, precision), t1, t2))
+            control_value = (
+                self.proportional_output(np.round(x2, precision), t2)
+                + self.derivative_output(np.round(x1, precision),
+                                         np.round(x2, precision), t1, t2)
+                + self.integral_output(np.round(x1, precision),
+                                       np.round(x2, precision), t1, t2)
+            )
             if (np.abs(control_value - self.output) >= self.deadband):
                 if (control_value > self.max_control):
                     self.output = self.max_control
@@ -111,11 +119,10 @@ class PIDControl():
 
         self.action = (self.action + 1) % self.frequency
 
-
     def proportional_output(self, x, t):
         """
-        Method returning the proportional or I controller output, depending on the
-        controller attribute alpha.
+        Method returning the proportional or I controller output, depending on
+        the controller attribute alpha.
 
         INPUT:
 
@@ -127,12 +134,12 @@ class PIDControl():
 
         return(control_value)
 
-
     def derivative_output(self, x1, x2, t1, t2):
         """
-        Method returning the derivative or D controller output, depending on the
-        attribute beta.  A numerical approximation of the derivative value is necessary
-        to compute the ouput.  The trapezoid rule was chosen for that.
+        Method returning the derivative or D controller output, depending on
+        the attribute beta.  A numerical approximation of the derivative value
+        is necessary to compute the ouput.  The trapezoid rule was chosen for
+        that.
 
         INPUT:
 
@@ -148,12 +155,11 @@ class PIDControl():
 
         return(control_value)
 
-
     def integral_output(self, x1, x2, t1, t2):
         """
         Method returning the integral or I controller output, depending on the
-        controller attribute mu.  A numerical approximation of the integral value is
-        necessary to compute the output.
+        controller attribute mu.  A numerical approximation of the integral
+        value is necessary to compute the output.
 
         INPUT:
 
@@ -166,7 +172,7 @@ class PIDControl():
         - t2: current time point (float).
         """
         control_value = (self.integral - self.mu*(t2 - t1)
-                         *(x1 - self.set_point + x2 - self.set_point)/2.0)
+                         * (x1 - self.set_point + x2 - self.set_point)/2.0)
 
         self.integral = control_value
         return(control_value)
@@ -178,15 +184,17 @@ class PIDControl():
 
 class ODESolver():
     """
-    Class implementation of a simple ODE solver for the inverted pendulum.  Intended
-    to be used in conjunction with the PIDControl class.  The solved ODE is of the form
-    x''(t) = f(x(t)) + u(t).
+    Class implementation of a simple ODE solver for the inverted pendulum.
+    Intended to be used in conjunction with the PIDControl class.  The solved
+    ODE is of the form x''(t) = f(x(t)) + u(t).
     """
+
     def __init__(self, t_start, t_end, N, f):
         """
-        Initialize second order ODE solver for given time parameters t_start, t_end, number
-        of support points N.  Initial values are given to the solve method for flexibility
-        in calculating solutions for different initial conditions.
+        Initialize second order ODE solver for given time parameters t_start,
+        t_end, number of support points N.  Initial values are given to the
+        solve method for flexibility in calculating solutions for different
+        initial conditions.
 
         INPUT:
 
@@ -200,7 +208,7 @@ class ODESolver():
 
         OUTPUT:
 
-        -Object representing the second order ODE with right hand side f.
+        - Object representing the second order ODE with right hand side f.
         """
         self.t_start = t_start
         self.t_end = t_end
@@ -212,12 +220,11 @@ class ODESolver():
         # Define array with time support points:
         self.t = [(self.t_start + i*self.h) for i in range(self.N + 1)]
 
-
     def solve(self, phi0, phi0_dot, alpha, beta, mu, max_control, frequency,
               deadband, set_point, precision):
         """
-        Method solving the ODE for given initial conditions and with PID controller, that
-        has the given parameters.
+        Method solving the ODE for given initial conditions and with PID
+        controller, that has the given parameters.
 
         INPUT:
 
@@ -235,7 +242,8 @@ class ODESolver():
 
         - frequency: Controller speed parameter (int >= 1).
 
-        - deadband: Minimum difference between calculated control outputs (float).
+        - deadband: Minimum difference between calculated control outputs
+                    (float).
 
         - set_point: Desired value of controlled system (float).
 
@@ -243,11 +251,12 @@ class ODESolver():
 
         OUTPUT:
 
-        - Numerically calculates the attributes (float arrays) phi, output_array, P_array,
-          I_array and D_array.
+        - Numerically calculates the attributes (float arrays) phi,
+          output_array, P_array, I_array and D_array.
         """
         self.phi0 = phi0
         self.phi0_dot = phi0_dot
+
         # Initialize solution array with given initial data:
         self.phi = [self.phi0, self.phi0 + self.phi0_dot * self.h]
         self.output_array = [0, 0]
@@ -266,51 +275,61 @@ class ODESolver():
         self.precision = precision
 
         # Create an instance of a PIDControl:
-        self.controller = PIDControl(self.alpha, self.beta, self.mu, self.frequency,
-                                     self.max_control, self.set_point, self.deadband)
+        self.controller = PIDControl(self.alpha, self.beta, self.mu,
+                                     self.frequency, self.max_control,
+                                     self.set_point, self.deadband)
 
         # Integrate the controlled ODE:
         for n in range(1, N):
             # Calculate the current control value:
-            self.controller.total_output(self.phi[n-1], self.phi[n], self.t[n-1],
-                                         self.t[n], precision=precision)
+            self.controller.total_output(self.phi[n-1], self.phi[n],
+                                         self.t[n-1], self.t[n],
+                                         precision=precision)
             u_n = self.controller.output
 
             # Save control values for control value plot:
             self.output_array.append(u_n)
-            self.P_array.append(self.controller.proportional_output(self.phi[n], self.t[n]))
-            self.D_array.append(self.controller.derivative_output(self.phi[n-1], self.phi[n],
-                                                                  self.t[n-1], self.t[n]))
+            self.P_array.append(
+                self.controller.proportional_output(self.phi[n], self.t[n]))
+            self.D_array.append(
+                self.controller.derivative_output(
+                    self.phi[n-1], self.phi[n], self.t[n-1], self.t[n]
+                )
+            )
             self.I_array.append(self.controller.integral)
 
-            # After the following calculation, tmp contains the entry phi[n + 1]:
+            # After the following calculation, tmp contains the entry
+            # phi[n + 1]:
             tmp = (2.0*self.phi[n] + self.f(self.phi[n])*self.h**2
                    - self.phi[n-1] + u_n*self.h**2)
             self.phi.append(tmp)
 
-
     def plot(self, file_name, parameter=False):
         """
-        Method to plot solutions generated with ODESolver class.  PID Parameters can be written
-        in the filename.  This might be useful for numerical experiments with several distinct
-        sets of parameters.
+        Method to plot solutions generated with ODESolver class. PID Parameters
+        can be written in the filename.  This might be useful for numerical
+        experiments with several distinct sets of parameters.
 
         INPUT:
 
-        - file_name: Name for the .png file, in which the solution is stored (string).
+        - file_name: Name for the .png file, in which the solution is stored
+                     (string).
 
-        - parameter: If True, controller parameters are written in the filename (Bool).
+        - parameter: If True, controller parameters are written in the filename
+                     (Bool).
 
         TODO:
 
-        - Fix naming scheme (Linear vs Nonlinear; testing for (lambda x: x) == self.f is
-          not implemented very nicely).
+        - Fix naming scheme (Linear vs Nonlinear; testing for
+          (lambda x: x) == self.f is not implemented very nicely).
         """
         # Plot time dependencies of system, i.e. angle phi, and control output:
         plt.figure()
         plt.plot(self.t, self.phi, "g-", label="Pendulum Angle")
-        # Try to fit the correct name to the kind of pendulum integrated.  This fails to
-        # make sense, if self.f is anything else than np.sin or (lambda x: x)
+
+        # Try to fit the correct name to the kind of pendulum integrated.  This
+        # fails to make sense, if self.f is anything else than np.sin or
+        # (lambda x: x)
         if self.f == np.sin:
             name = " Nonlinear "
         elif (self.f(np.e) == np.e) and (self.f(np.sqrt(2)) == np.sqrt(2)):
@@ -318,11 +337,15 @@ class ODESolver():
         else:
             name = " Disturbed "
         plt.plot(self.t, self.output_array, "r-", label="Controller Output")
-        plt.title("PID controlled" + name + "Inverted Pendulum with Parameters\n"
-                  "alpha = {}, beta = {}, mu = {}, max_output = {}, frequency = {}, "
-                  "deadband = {}, precision = {}".format(self.alpha, self.beta, self.mu,
-                                                         self.max_control, self.frequency,
-                                                         self.deadband, self.precision))
+        plt.title(
+            "PID controlled" + name + "Inverted Pendulum with Parameters\n"
+            "alpha = {}, beta = {}, mu = {}, max_output = {}, frequency = {}, "
+            "deadband = {}, precision = {}".format(
+                self.alpha, self.beta, self.mu,
+                self.max_control, self.frequency,
+                self.deadband, self.precision
+            )
+        )
 
         plt.xlabel("$t$ (s)", fontsize=15)
         plt.ylabel("$\phi$ ($2\pi$)", fontsize=15)
@@ -333,18 +356,26 @@ class ODESolver():
         plt.legend(loc="upper right", shadow=True)
 
         plt.grid(True)
-        if parameter:
-            plt.savefig("pics/" + file_name
-                        + "_{}_{}_{}_1.png".format(self.alpha, self.beta, self.mu))
-        else:
-            plt.savefig("pics/" + file_name + "_1.png")
+        try:
+            if parameter:
+                plt.savefig("pics/" + file_name + "_{}_{}_{}_1.png".format(
+                    self.alpha, self.beta, self.mu
+                ))
+            else:
+                plt.savefig("pics/" + file_name + "_1.png")
+        except FileNotFoundError:
+            print("Warning: Please create directory `pics' to save plots to.")
+            exit(1)
 
         # Plot P, I, D and total control outputs together in one diagram:
         plt.figure()
-        plt.plot(self.t, self.output_array, "b--", label="Total Control Output")
-        plt.plot(self.t, self.P_array, "y--", label="Proportional Control Output")
+        plt.plot(self.t, self.output_array, "b--",
+                 label="Total Control Output")
+        plt.plot(self.t, self.P_array, "y--",
+                 label="Proportional Control Output")
         plt.plot(self.t, self.I_array, "r--", label="Integral Control Output")
-        plt.plot(self.t, self.D_array, "g--", label="Derivative Control Output")
+        plt.plot(self.t, self.D_array, "g--",
+                 label="Derivative Control Output")
 
         plt.title("Control Values")
         plt.xlabel("$t$", fontsize=15)
@@ -358,7 +389,9 @@ class ODESolver():
         plt.grid(True)
         if parameter:
             plt.savefig("pics/" + file_name
-                        + "_{}_{}_{}_2.png".format(self.alpha, self.beta, self.mu))
+                        + "_{}_{}_{}_2.png".format(
+                            self.alpha, self.beta, self.mu)
+                        )
         else:
             plt.savefig("pics/" + file_name + "_2.png")
         plt.show()
@@ -379,13 +412,15 @@ if __name__ == '__main__':
     t_end = 45.0
     N = 9000
 
-    # Perturbation could perhaps be randomized;  something like (0.01*np.pi) seems
-    # to be a good value for this particular parameter set.
+    # Perturbation could perhaps be randomized;  something like (0.01*np.pi)
+    # seems to be a good value for this particular parameter set.
     PERTURBATION = 0.0 * np.pi
     f1 = np.sin
-    f2 = lambda x: x + PERTURBATION
+
+    def f2(x): return x + PERTURBATION
     # The following is am unused prototype for a perturbed nonlinear pendulum:
-    f3 = lambda x: np.sin(x) + PERTURBATION
+
+    def f3(x): return np.sin(x) + PERTURBATION
 
     phi0 = 0.5 * np.pi
     phi0_dot = 0.3 * np.pi
@@ -404,20 +439,15 @@ if __name__ == '__main__':
     ode2.plot("linearPID", parameter=True)
 
 
-
-
-
-########################################################################################
-# TODO: Implement and investigate (random) noise; use PERTURBATION parameter or maybe
-#       even a stochastic function of time
-# TODO: Implement optimality criteria (at least speed of first achieving the set point
-#       and overswing width around the set point).
+###############################################################################
+# TODO: Implement and investigate (random) noise; use PERTURBATION parameter or
+#       maybe even a stochastic function of time
+# TODO: Implement optimality criteria (at least speed of first achieving the
+#       set point and overswing width around the set point).
 # TODO: Implement functionality for variable set point.
-# TODO: Implement integral anti-windup (deactivate integrator, if difference between
-#       system value and set point is too small)?
+# TODO: Implement integral anti-windup (deactivate integrator, if difference
+#       between system value and set point is too small)?
 # TODO: Implement (in ODE) friction.
-# TODO: Include physical parameters pendulum length (L), gravitational constant (G)!
-########################################################################################
-
-
-
+# TODO: Include physical parameters pendulum length (L), gravitational constant
+#       (G)!
+###############################################################################
