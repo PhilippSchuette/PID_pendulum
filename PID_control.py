@@ -83,6 +83,7 @@ class PIDControl():
         # Attribute to keep track of controller speed:
         self.action = 0
 
+
     def total_output(self, x1, x2, t1, t2, precision=4):
         """
         Method returning the total controller output in response to system
@@ -127,6 +128,7 @@ class PIDControl():
         self.action = (self.action + 1) % self.frequency
         return(self.output)
 
+
     def proportional_output(self, x, t):
         """
         Method returning the proportional or I controller output, depending on
@@ -145,6 +147,7 @@ class PIDControl():
         control_value = -self.alpha * (x - self.set_point)
 
         return(control_value)
+
 
     def derivative_output(self, x1, x2, t1, t2):
         """
@@ -170,6 +173,7 @@ class PIDControl():
         control_value = -self.beta*(x2 - x1)/(t2 - t1)
 
         return(control_value)
+
 
     def integral_output(self, x1, x2, t1, t2):
         """
@@ -241,11 +245,12 @@ class Pendulum():
         # Define array with time support points:
         self.t = [(self.t_start + i*self.h) for i in range(self.N + 1)]
 
+
     def solve(self, phi0, phi0_dot, alpha, beta, mu, max_control, frequency,
               deadband, set_point, precision):
         """
-        Method solving the ODE for given initial conditions and with PID
-        controller, that has the given parameters.
+        Method solving the ODE for given physical initial conditions, i.e. initial
+        angle and velocity, and with PID controller, that has the given parameters.
 
         INPUT:
 
@@ -305,12 +310,13 @@ class Pendulum():
             # Calculate the current control value:
             u_n = self.controller.total_output(self.phi[n-1], self.phi[n],
                                                self.t[n-1], self.t[n],
-                                               precision=precision)
+                                               precision=self.precision)
 
             # Save control values for control value plot:
             self.output_array.append(u_n)
             self.P_array.append(
-                self.controller.proportional_output(self.phi[n], self.t[n]))
+                self.controller.proportional_output(self.phi[n], self.t[n])
+            )
             self.D_array.append(
                 self.controller.derivative_output(
                     self.phi[n-1], self.phi[n], self.t[n-1], self.t[n]
@@ -323,6 +329,92 @@ class Pendulum():
             tmp = (2.0*self.phi[n] + self.f(self.phi[n])*self.h**2
                    - self.phi[n-1] + u_n*self.h**2)
             self.phi.append(tmp)
+
+
+    def solve_from_angles(self, phi0, phi1, alpha, beta, mu, max_control,
+                          frequency, deadband, set_point, precision):
+        """
+        Method solving the ODE for given numerical initial conditions, i.e. two
+        initial angles.  Works exactly like the solve() method.
+
+        INPUT:
+
+        - phi0: First initial value (float).
+
+        - phi1: Second initial value (float).
+
+        - alpha: Proportional control parameter (float > 0).
+
+        - beta: Derivative control parameter (float > 0).
+
+        - mu: Integral control parameter (float > 0).
+
+        - max_control: Controller output bound (float > 0).
+
+        - frequency: Controller speed parameter (int >= 1).
+
+        - deadband: Minimum difference between calculated control outputs
+                    (float).
+
+        - set_point: Desired value of controlled system (float).
+
+        - precision: Measurement precision of controller input (int > 0).
+
+        OUTPUT:
+
+        - Numerically calculates the attributes (float arrays) phi,
+          output_array, P_array, I_array and D_array.
+        """
+        self.phi0 = phi0
+        self.phi1 = phi1
+
+        # Initialize solution array with given initial angles:
+        self.phi = [self.phi0, self.phi1]
+        self.output_array = [0, 0]
+        self.P_array = [0, 0]
+        self.I_array = [0, 0]
+        self.D_array = [0, 0]
+
+        # Initialize PID controller:
+        self.alpha = alpha
+        self.beta = beta
+        self.mu = mu
+        self.max_control = max_control
+        self.frequency = frequency
+        self.deadband = deadband
+        self.set_point = set_point
+        self.precision = precision
+
+        # Create an instance of a PIDControl:
+        self.controller = PIDControl(self.alpha, self.beta, self.mu,
+                                     self.frequency, self.max_control,
+                                     self.set_point, self.deadband)
+
+        # Integrate the controlled ODE:
+        for n in range(1, N):
+            # Calculate the current control value:
+            u_n = self.controller.total_output(self.phi[n-1], self.phi[n],
+                                               self.t[n-1], self.t[n],
+                                               precision=self.precision)
+
+            # Save control values for control value plot:
+            self.output_array.append(u_n)
+            self.P_array.append(
+                self.controller.proportional_output(self.phi[n], self.t[n])
+            )
+            self.D_array.append(
+                self.controller.derivative_output(
+                    self.phi[n-1], self.phi[n], self.t[n-1], self.t[n]
+                )
+            )
+            self.I_array.append(self.controller.integral)
+
+            # After the following calculation, tmp contains the entry
+            # phi[n + 1]:
+            tmp = (2.0*self.phi[n] + self.f(self.phi[n])*self.h**2
+                   - self.phi[n-1] + u_n*self.h**2)
+            self.phi.append(tmp)
+
 
     def plot(self, file_name, parameter=False):
         """
@@ -376,6 +468,8 @@ class Pendulum():
         plt.legend(loc="upper right", shadow=True)
 
         plt.grid(True)
+
+        # Catch exception, if directory pics/ does not exist:
         try:
             if parameter:
                 plt.savefig("pics/" + file_name + "_{}_{}_{}_1.png".format(
@@ -416,6 +510,11 @@ class Pendulum():
             plt.savefig("pics/" + file_name + "_2.png")
         plt.show()
 
+
+
+################################################
+# Debugging of PIDControl and Pendulum classes #
+################################################
 
 if __name__ == '__main__':
     # Set PID control parameters:
