@@ -19,6 +19,7 @@ def api():
         - N=(t_end-t_start)*100
         - nonlinear=True
         - phi0, phi0_dot
+        - L=0.1
         - max_control, frequency, deadband, set_point, precision
         - API key
     """
@@ -27,7 +28,7 @@ def api():
         "deadband", "set_point", "precision", "key"
     ]  # list of required params
     optional = {
-        "t_start": 0, "t_end": 30, "N": 3000, "nonlinear": True
+        "t_start": 0, "t_end": 30, "N": 3000, "nonlinear": True, "L": 0.1
     }  # dict of optional params and default values
 
     # get params from URL and save them to a dict
