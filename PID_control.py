@@ -83,7 +83,6 @@ class PIDControl():
         # Attribute to keep track of controller speed:
         self.action = 0
 
-
     def total_output(self, x1, x2, t1, t2, precision=4):
         """
         Method returning the total controller output in response to system
@@ -128,7 +127,6 @@ class PIDControl():
         self.action = (self.action + 1) % self.frequency
         return(self.output)
 
-
     def proportional_output(self, x, t):
         """
         Method returning the proportional or I controller output, depending on
@@ -147,7 +145,6 @@ class PIDControl():
         control_value = -self.alpha * (x - self.set_point)
 
         return(control_value)
-
 
     def derivative_output(self, x1, x2, t1, t2):
         """
@@ -173,7 +170,6 @@ class PIDControl():
         control_value = -self.beta*(x2 - x1)/(t2 - t1)
 
         return(control_value)
-
 
     def integral_output(self, x1, x2, t1, t2):
         """
@@ -251,12 +247,12 @@ class Pendulum():
         # Define array with time support points:
         self.t = [(self.t_start + i*self.h) for i in range(self.N + 1)]
 
-
     def solve(self, phi0, phi0_dot, alpha, beta, mu, max_control, frequency,
               deadband, set_point, precision):
         """
-        Method solving the ODE for given physical initial conditions, i.e. initial
-        angle and velocity, and with PID controller, that has the given parameters.
+        Method solving the ODE for given physical initial conditions, i.e.
+        initial angle and velocity, and with PID controller, that has the
+        given parameters.
 
         INPUT:
 
@@ -334,7 +330,6 @@ class Pendulum():
             tmp = (2.0*self.phi[n] + self.L*self.G*self.f(self.phi[n])*self.h**2
                    - self.phi[n-1] + u_n*self.h**2)
             self.phi.append(tmp)
-
 
     def solve_from_angles(self, phi0, phi1, alpha, beta, mu, max_control,
                           frequency, deadband, set_point, precision):
@@ -419,7 +414,6 @@ class Pendulum():
             tmp = (2.0*self.phi[n] + self.f(self.phi[n])*self.h**2
                    - self.phi[n-1] + u_n*self.h**2)
             self.phi.append(tmp)
-
 
     def plot(self, file_name, parameter=False):
         """
@@ -516,11 +510,9 @@ class Pendulum():
         plt.show()
 
 
-
 ################################################
 # Debugging of PIDControl and Pendulum classes #
 ################################################
-
 if __name__ == '__main__':
     # Set PID control parameters:
     ALPHA = 4.4

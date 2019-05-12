@@ -20,5 +20,14 @@ cd api
 flask run # now, visit localhost:5000 in a web browser
 ```
 
+If the webserver is running, API requests can be send to the route `/api/v1`. The following script demonstrates that:
+
+```bash
+./req_api.sh # performs a valid API request
+./req_api.sh err # performs an invalid API request
+```
+
+Currently, the API simply echos the given parameters or returns an error if a required parameter was not provided. Soon, the API will return `json` containing the function values that correspond to the user-provided arguments.
+
 ## License
 The code in this repository is [GPL-3.0 licensed](./LICENSE.md). `html` and `css` files are not distributed under any license if not specified otherwise.

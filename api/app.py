@@ -16,17 +16,37 @@ def api():
     The following parameters are extracted from the URL:
         - alpha, beta, mu
         - t_start=0.0, t_end=30.0
-        - N=(t_start - t_end)*100
+        - N=(t_end-t_start)*100
         - nonlinear=True
         - phi0, phi0_dot
         - max_control, frequency, deadband, set_point, precision
         - API key
-    TODO: Maybe make this a singleton? Get the API key from the environment.
     """
-    params = []
-    params.append("something")
-    if "id" in request.args:
-        return jsonify("You provided {}.".format(request.args["id"]))
+    required = [
+        "alpha", "beta", "mu", "phi0", "phi0_dot", "max_control", "frequency",
+        "deadband", "set_point", "precision", "key"
+    ]  # list of required params
+    optional = {
+        "t_start": 0, "t_end": 30, "N": 3000, "nonlinear": True
+    }  # dict of optional params and default values
+
+    # get params from URL and save them to a dict
+    # only params with defaults don't result in an error if not provided
+    params = {}
+
+    for param in required:
+        if param in request.args:
+            params[param] = request.args[param]
+        else:
+            return jsonify("Error: Parameter {} is required.".format(param))
+
+    for param, default in optional.items():
+        if param in request.args:
+            params[param] = request.args[param]
+        else:
+            params[param] = default
+
+    return jsonify(params)
 
 
 # the following routes serve static web pages for the actual web app
