@@ -15,16 +15,13 @@
 # Author: Philipp Schuette
 # License: GPL-3.0
 # Date: 20/04/2019
-
-
 import matplotlib.pyplot as plt
 import numpy as np
+
 
 ##################
 # PID Controller #
 ##################
-
-
 class PIDControl():
     """
     Class implementation of a PID controller.
@@ -202,7 +199,6 @@ class PIDControl():
 ##################################
 # Controlled Pendulum ODE Solver #
 ##################################
-
 class Pendulum():
     """
     Class implementation of a simple ODE solver for the inverted pendulum.
@@ -328,9 +324,10 @@ class Pendulum():
             self.I_array.append(self.controller.integral)
 
             # After this calculation, tmp contains the angle value phi[n+1]:
-            tmp = (2.0*self.phi[n]
-                   + self.L*self.G*self.f(self.phi[n])*self.h**2
-                   - self.phi[n-1] + u_n*self.h**2)
+            tmp = (
+                2.0*self.phi[n] + self.L*self.G*self.f(self.phi[n])*self.h**2
+                - self.phi[n-1] + u_n*self.h**2
+            )
             self.phi.append(tmp)
 
     def solve_from_angles(self, phi0, phi1, alpha, beta, mu, max_control,
@@ -538,7 +535,7 @@ if __name__ == '__main__':
 
     def f2(x): return x + PERTURBATION
 
-    # The following is am unused prototype for a perturbed nonlinear pendulum:
+    # The following is an unused prototype for a perturbed nonlinear pendulum:
     def f3(x): return np.sin(x) + PERTURBATION
 
     phi0 = 0.5 * np.pi

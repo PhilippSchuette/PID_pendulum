@@ -3,7 +3,10 @@
 # Author: Daniel Schuette
 # License: GPL-3.0
 # Date: 12/05/2019
+import numpy as np
 from flask import Flask, jsonify, request
+
+from PID_pendulum.PID_control import Pendulum
 
 app = Flask(__name__, static_url_path="/static")
 
@@ -46,6 +49,19 @@ def api():
             params[param] = request.args[param]
         else:
             params[param] = default
+
+    # TODO: instantiate PIDControl object and return its results
+    pendulum = Pendulum(
+        int(params["t_start"]), int(params["t_end"]),
+        int(params["N"]), np.sin, 0.1
+    )
+    pendulum.solve(
+        int(params["phi0"]), int(params["phi0_dot"]), int(params["alpha"]),
+        int(params["beta"]), int(params["mu"]), int(params["max_control"]),
+        int(params["frequency"]), int(params["deadband"]),
+        int(params["set_point"]), int(params["precision"])
+    )
+    print(pendulum)
 
     return jsonify(params)
 

@@ -13,7 +13,7 @@ This is a short description of the PID controlled pendulum project. The project 
 Additional features will be added in the future.
 
 ## Web API and Demonstration
-A demonstration of the PID pendulum controller implementation will be available soon. To run the web app locally, `pip install flask` and run:
+A demonstration of the PID pendulum controller implementation will be available soon. To run the web app locally, `pip install flask`, `make` and run:
 
 ```bash
 cd api
