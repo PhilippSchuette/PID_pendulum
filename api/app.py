@@ -41,6 +41,9 @@ def api():
     params = {}
 
     # TODO: check API key before performing any actions
+    # TODO: validate user request (some values must be within certain limits)
+    # TODO: use different methods (`solve' and `solve_from_angle' must be
+    #       parameterized)
 
     for param in required:
         if param in request.args:
@@ -59,7 +62,6 @@ def api():
         float(params["t_start"]), float(params["t_end"]),
         int(params["N"]), np.sin, 0.1
     )
-    print(pendulum)
     pendulum.solve(
         float(params["phi0"]), float(params["phi0_dot"]),
         float(params["alpha"]), float(params["beta"]), float(params["mu"]),
@@ -67,9 +69,13 @@ def api():
         float(params["deadband"]), float(params["set_point"]),
         int(params["precision"])
     )
-    print(pendulum)
 
-    return jsonify(params)
+    # collect angles and support values into a dictionary and return the JSON
+    angles = {
+        "angles": pendulum.get_func_values(),
+        "support_values": pendulum.get_support_values()
+    }
+    return jsonify(angles)
 
 
 # the following routes serve static web pages for the actual web app

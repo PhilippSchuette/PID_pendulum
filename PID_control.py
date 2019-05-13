@@ -355,7 +355,7 @@ class Pendulum():
             )
             self.I_array.append(self.controller.integral)
 
-            # After this calculation, tmp contains the angle value phi[n+1]:
+            # After this calculation, `tmp' contains the angle value phi[n+1]:
             tmp = (
                 2.0*self.phi[n] + self.L*self.G*self.f(self.phi[n])*self.h**2
                 - self.phi[n-1] + u_n*self.h**2
@@ -473,6 +473,26 @@ class Pendulum():
             tmp = (2.0*self.phi[n] + self.f(self.phi[n])*self.h**2
                    - self.phi[n-1] + u_n*self.h**2)
             self.phi.append(tmp)
+
+    def get_func_values(self):
+        """
+        A convenience method that returns the calculated function values or an
+        empty list if `solve' was never called on this pendulum.
+        """
+        if hasattr(self, "phi"):
+            return self.phi
+        else:
+            return []
+
+    def get_support_values(self):
+        """
+        A convenience method that returns the support values (== time points)
+        or an empty list if `solve' was never called on this pendulum.
+        """
+        if hasattr(self, "t"):
+            return self.t
+        else:
+            return []
 
     def plot(self, file_name, parameter=False):
         """
