@@ -355,7 +355,7 @@ class Pendulum():
             )
             self.I_array.append(self.controller.integral)
 
-            # After this calculation, tmp contains the angle value phi[n+1]:
+            # After this calculation, `tmp' contains the angle value phi[n+1]:
             tmp = (
                 2.0*self.phi[n] + self.L*self.G*self.f(self.phi[n])*self.h**2
                 - self.phi[n-1] + u_n*self.h**2
@@ -474,6 +474,27 @@ class Pendulum():
                    - self.phi[n-1] + u_n*self.h**2)
             self.phi.append(tmp)
 
+    def get_func_values(self):
+        """
+        A convenience method that returns the calculated function values
+        or an empty list if `solve' was never called on this pendulum.
+        """
+        if hasattr(self, "phi"):
+            return self.phi
+        else:
+            return []
+
+    def get_support_values(self):
+        """
+        A convenience method that returns the support values (== time
+        points)or an empty list if `solve' was never called on this
+        pendulum.
+        """
+        if hasattr(self, "t"):
+            return self.t
+        else:
+            return []
+
     def plot(self, file_name, parameter=False):
         """
         Method to plot solutions generated with Pendulum class. PID Parameters
@@ -517,7 +538,7 @@ class Pendulum():
         )
 
         plt.xlabel("$t$ (s)", fontsize=15)
-        plt.ylabel("$\phi$ ($2\pi$)", fontsize=15)
+        plt.ylabel("$\phi$ ($2\pi$)", fontsize=15)  # noqa
         plt.tick_params(labelsize=15)
 
         plt.xlim(self.t_start, self.t_end)
@@ -615,13 +636,13 @@ if __name__ == '__main__':
 
 
 ###############################################################################
-# :todo: Implement and investigate (random) noise; use PERTURBATION parameter or
-#       maybe even a stochastic function of time
+# :todo: Implement and investigate (random) noise; use PERTURBATION parameter
+#        or maybe even a stochastic function of time
 # :todo: Implement optimality criteria (at least speed of first achieving the
-#       set point and overswing width around the set point).
+#        set point and overswing width around the set point).
 # :todo: Implement functionality for variable set point.
 # :todo: Implement integral anti-windup (deactivate integrator, if difference
-#       between system value and set point is too small)?
+#        between system value and set point is too small)?
 # :todo: Implement (in ODE) friction.
 # :todo: Raise exceptions, when incorrect parameters are supplied!
 # :todo: Improve doctest coverage!

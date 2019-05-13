@@ -1,12 +1,4 @@
-# Make an editable package.
-# Make a local package for import in api/app.py.
-all:
-	sudo -H pip3 install -e .
-	sudo python3 setup.py bdist_wheel
-	sudo -H pip3 install dist/PID_pendulum-0.0.1-py3-none-any.whl
-
-# Minimal makefile for Sphinx documentation
-
+# Make a local package for import in api/app.py and Sphinx documentation.
 # You can set these variables from the command line.
 SPHINXOPTS    =
 SPHINXBUILD   = sphinx-build
@@ -17,6 +9,12 @@ BUILDDIR      = _build
 # Put it first so that "make" without argument is like "make help".
 help:
 	@$(SPHINXBUILD) -M help "$(SOURCEDIR)" "$(BUILDDIR)" $(SPHINXOPTS) $(O)
+
+all:
+	flake8 PID_control.py
+	sudo -H pip3 install -e .
+	sudo python3 setup.py bdist_wheel
+	sudo -H pip3 install dist/PID_pendulum-0.0.1-py3-none-any.whl
 
 .PHONY: help Makefile
 

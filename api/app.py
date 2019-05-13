@@ -6,7 +6,6 @@
 import numpy as np
 from flask import Flask, jsonify, request
 
-from PID_pendulum.PID_control import PIDControl
 from PID_pendulum.PID_control import Pendulum
 
 app = Flask(__name__, static_url_path="/static")
@@ -19,19 +18,18 @@ def api():
     """
     The following parameters are extracted from the URL:
         - alpha, beta, mu
+        - phi0, phi0_dot
+        - max_control, deadband, set_point
         - t_start=0.0, t_end=30.0
         - N=(t_end-t_start)*100
         - nonlinear=True
-        - phi0, phi0_dot
         - L=0.1
-        - max_control, deadband, set_point
-        - precision=5
-        - frequency=10
+        - precision=5, frequency=10
         - API key
     """
     required = [
-        "alpha", "beta", "mu", "phi0", "phi0_dot", "max_control", "frequency",
-        "deadband", "set_point", "precision", "key"
+        "alpha", "beta", "mu", "phi0", "phi0_dot", "max_control",
+        "deadband", "set_point", "key"
     ]  # list of required params
     optional = {
         "t_start": 0, "t_end": 30, "N": 3000, "nonlinear": True, "L": 0.1,
@@ -41,6 +39,11 @@ def api():
     # get params from URL and save them to a dict
     # only params with defaults don't result in an error if not provided
     params = {}
+
+    # TODO: check API key before performing any actions
+    # TODO: validate user request (some values must be within certain limits)
+    # TODO: use different methods (`solve' and `solve_from_angle' must be
+    #       parameterized)
 
     for param in required:
         if param in request.args:
@@ -54,12 +57,11 @@ def api():
         else:
             params[param] = default
 
-    # TODO: instantiate PIDControl object and return its results
+    # instantiate PIDControl object and return its results
     pendulum = Pendulum(
         float(params["t_start"]), float(params["t_end"]),
         int(params["N"]), np.sin, 0.1
     )
-    print(pendulum)
     pendulum.solve(
         float(params["phi0"]), float(params["phi0_dot"]),
         float(params["alpha"]), float(params["beta"]), float(params["mu"]),
@@ -68,7 +70,12 @@ def api():
         int(params["precision"])
     )
 
-    return jsonify(params)
+    # collect angles and support values into a dictionary and return the JSON
+    angles = {
+        "angles": pendulum.get_func_values(),
+        "support_values": pendulum.get_support_values()
+    }
+    return jsonify(angles)
 
 
 # the following routes serve static web pages for the actual web app

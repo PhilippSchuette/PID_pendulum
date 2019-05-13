@@ -15,6 +15,7 @@ Welcome to PID_control's documentation!
 .. automodule:: PID_control
    :members:
    :special-members:
+   :exclude-members: __dict__,__weakref__
    :undoc-members:
 
 
