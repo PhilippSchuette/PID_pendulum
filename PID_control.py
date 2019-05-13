@@ -477,9 +477,9 @@ class Pendulum():
     def get_func_values(self):
         """
         A convenience method that returns the calculated function values
-        or an empty list if `solve' was never called on this pendulum.
+        or an empty list if `solve` was never called on this pendulum.
 
-        :output: array containing angle float values
+        :output: array containing angle solution values (floats)
         """
         if hasattr(self, "phi"):
             return self.phi
@@ -489,10 +489,10 @@ class Pendulum():
     def get_support_values(self):
         """
         A convenience method that returns the support values (== time
-        points)or an empty list if `solve' was never called on this
+        points)or an empty list if `solve` was never called on this
         pendulum.
 
-        :output: array containing time float values
+        :output: array containing support values (floats)
         """
         if hasattr(self, "t"):
             return self.t
