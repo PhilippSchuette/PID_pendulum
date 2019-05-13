@@ -476,8 +476,10 @@ class Pendulum():
 
     def get_func_values(self):
         """
-        A convenience method that returns the calculated function values or an
-        empty list if `solve' was never called on this pendulum.
+        A convenience method that returns the calculated function values
+        or an empty list if `solve' was never called on this pendulum.
+
+        :output: array containing phi values (floats)
         """
         if hasattr(self, "phi"):
             return self.phi
@@ -486,8 +488,9 @@ class Pendulum():
 
     def get_support_values(self):
         """
-        A convenience method that returns the support values (== time points)
-        or an empty list if `solve' was never called on this pendulum.
+        A convenience method that returns the support values (== time
+        points)or an empty list if `solve' was never called on this
+        pendulum.
         """
         if hasattr(self, "t"):
             return self.t
@@ -634,13 +637,15 @@ if __name__ == '__main__':
     ode2.plot("linearPID", parameter=True)
 
 
-#############################################################################
+###############################################################################
 # :todo: Implement and investigate (random) noise; use PERTURBATION parameter
-#       or maybe even a stochastic function of time
+#        or maybe even a stochastic function of time
 # :todo: Implement optimality criteria (at least speed of first achieving the
-#       set point and overswing width around the set point).
+#        set point and overswing width around the set point).
 # :todo: Implement functionality for variable set point.
 # :todo: Implement integral anti-windup (deactivate integrator, if difference
-#       between system value and set point is too small)?
+#        between system value and set point is too small)?
 # :todo: Implement (in ODE) friction.
-#############################################################################
+# :todo: Raise exceptions, when incorrect parameters are supplied!
+# :todo: Improve doctest coverage!
+###############################################################################
