@@ -16,7 +16,14 @@ all:
 	sudo python3 setup.py bdist_wheel
 	sudo -H pip3 install dist/PID_pendulum-0.0.1-py3-none-any.whl
 
-.PHONY: help Makefile
+# don't use this target
+html_docs:
+	make html
+	rm -rf api/static/docs
+	cp -R _build/html api/static/docs
+	./utils/modpath.sh
+
+.PHONY: help all dist html_docs Makefile
 
 # Catch-all target: route all unknown targets to Sphinx using the new
 # "make mode" option.  $(O) is meant as a shortcut for $(SPHINXOPTS).
