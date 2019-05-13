@@ -250,14 +250,14 @@ class Pendulum():
     def solve(self, phi0, phi0_dot, alpha, beta, mu, max_control, frequency,
               deadband, set_point, precision):
         """
-        Method solving the ODE for given physical initial conditions, i.e.
-        initial angle and velocity, and with PID controller, that has the
-        given parameters.
+        Method solving the ODE for given physical initial conditions,
+        i.e. initial angle and velocity, and with PID controller, that
+        has the given parameters.
 
         :type phi0: float
         :param phi0: initial value
 
-        : type phi0_dot: float
+        :type phi0_dot: float
         :param phi0_dot: initial angular velocity
 
         :type alpha: float > 0
@@ -385,16 +385,18 @@ class Pendulum():
         >>> PRECISION = 5; t_start = 0.0; t_end = 45.0; N = 9000; LENGTH = 0.1
         >>> phi0 = 0.5 * np.pi; phi0_dot = 0.3 * np.pi
         >>> pendulum = Pendulum(t_start, t_end, N, np.sin, L=LENGTH)
-        >>> phi1 = phi0_dot + phi0_dot*pendulum.h
-        >>> x = pendulum.solve(
+        >>> phi1 = phi0 + phi0_dot*pendulum.h
+        >>> pendulum.solve(
         ... phi0, phi0_dot, ALPHA, BETA, MU, MAX_CONTROL, FREQUENCY, DEADBAND,
         ... SET_POINT, PRECISION
         ... )
-        >>> y = pendulum.solve_from_angles(
+        >>> x = pendulum.phi[10]
+        >>> pendulum.solve_from_angles(
         ... phi0, phi1, ALPHA, BETA, MU, MAX_CONTROL, FREQUENCY, DEADBAND,
         ... SET_POINT, PRECISION
         ... )
-        >>> print(x == y)
+        >>> y = pendulum.phi[10]
+        >>> print(np.abs(x - y) < 5e-5)
         True
         """
         self.phi0 = phi0
