@@ -623,4 +623,6 @@ if __name__ == '__main__':
 # :todo: Implement integral anti-windup (deactivate integrator, if difference
 #       between system value and set point is too small)?
 # :todo: Implement (in ODE) friction.
+# :todo: Raise exceptions, when incorrect parameters are supplied!
+# :todo: Improve doctest coverage!
 ###############################################################################
