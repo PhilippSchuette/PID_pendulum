@@ -479,7 +479,7 @@ class Pendulum():
         A convenience method that returns the calculated function values
         or an empty list if `solve' was never called on this pendulum.
 
-        :output: array containing phi values (floats)
+        :output: array containing angle float values
         """
         if hasattr(self, "phi"):
             return self.phi
@@ -491,6 +491,8 @@ class Pendulum():
         A convenience method that returns the support values (== time
         points)or an empty list if `solve' was never called on this
         pendulum.
+
+        :output: array containing time float values
         """
         if hasattr(self, "t"):
             return self.t
