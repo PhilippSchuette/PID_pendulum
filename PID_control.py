@@ -24,43 +24,42 @@ import numpy as np
 ##################
 class PIDControl():
     """
-    Class implementation of a PID controller.
+    Class implementation of a PID controller.  This class is initialize
+    from given data like parameters for P, I and D, controller speed
+    with respect to the modelled system and a bound for controller
+    ouput.  Especially the latter two are quite important in practical
+    applications.  The set point, that the controller tries to reach,
+    can also be adjusted manually.  A parameter deadband reduces strain
+    on possible machinery behind the controller; the control output is
+    only changed, if the newly calculated output differs from the
+    previous one by at least the amount specified by deadband.
     """
 
     def __init__(self, alpha, beta, mu, frequency,
                  max_control, set_point, deadband):
         """
-        Initialize PID controller from given data like parameters for P, I and
-        D, controller speed with respect to the modelled system and a bound for
-        controller ouput.  Especially the latter two are quite important in
-        practical applications.  The set point, that the controller tries to
-        reach, can also be adjusted manually.  A parameter deadband reduces
-        strain on possible machinery behind the controller; the control output
-        is only changed, if the newly calculated output differs from the
-        previous one by at least the amount specified by deadband.
+        Initialize PIDControl class.
 
-        INPUT:
+        :type alpha: float > 0
+        :param alpha: proportional control parameter
 
-        - alpha: Proportional control parameter (float > 0).
+        :type beta: float > 0
+        :param beta: derivative control parameter
 
-        - beta: Derivative control parameter (float > 0).
+        :type mu: float > 0
+        :param mu: integral control parameter
 
-        - mu: Integral control parameter (float > 0).
+        :type frequency: int >= 1
+        :param frequency: controller speed parameter
 
-        - frequency: Controller speed parameter (int >= 1).
+        :type max_control: float > 0
+        :param max_control: controller output bound
 
-        - max_control: Controller output bound (float > 0).
+        :type set_point: float between 0 and 2*pi
+        :param set_point: desired valued of controlled system
 
-        - set_point: Desired value of controlled system
-                     (0 <= float <= 2*pi).
-
-        - deadband: Minimum difference between calculated control outputs
-                    (float > 0).
-
-        OUTPUT:
-
-        - Representation of a PID controller with parameters alpha, beta
-          and mu.
+        :type deadband: float > 0
+        :param deadband: minimum difference for controller adjustment
         """
         self.alpha = alpha
         self.beta = beta
@@ -90,21 +89,22 @@ class PIDControl():
         the deadband attribute. Limited measurement precision is included by
         rounding controller input.
 
-        INPUT:
+        :type x1: float
+        :param x1: system value at time t1
 
-        - x1: system value at time t1 (float).
+        :type x2: float
+        :param x2: system value at time t2
 
-        - x2: system value at time t2 (float).
+        :type t1: float
+        :param t1: last time point
 
-        - t1: last time point (float).
+        :type t2: float
+        :param t2: current time point
 
-        - t2: current time point (float).
+        :type precision: int > 0
+        :param precision: system measurement precision
 
-        - precision: system measurement precision (int > 0).
-
-        OUTPUT:
-
-        - Total control value.
+        :output: total control value
         """
         if (self.action == 0):
             control_value = (
@@ -130,15 +130,13 @@ class PIDControl():
         Method returning the proportional or I controller output, depending on
         the controller attribute alpha.
 
-        INPUT:
+        :type x: float
+        :param x: system value at time t
 
-        - x: system value at time t (float).
+        :type t: float
+        :param t: current time point
 
-        - t: current time point (float).
-
-        OUTPUT:
-
-        - Proportional control value.
+        :output: Proportional control value
         """
         control_value = -self.alpha * (x - self.set_point)
 
@@ -146,24 +144,24 @@ class PIDControl():
 
     def derivative_output(self, x1, x2, t1, t2):
         """
-        Method returning the derivative or D controller output, depending on
-        the attribute beta.  A numerical approximation of the derivative value
-        is necessary to compute the ouput.  The trapezoid rule was chosen for
-        that.
+        Method returning the derivative or D controller output, depending
+        on the attribute beta.  A numerical approximation of the
+        derivative value is necessary to compute the ouput.  The
+        trapezoid rule was chosen for that.
 
-        INPUT:
+        :type x1: float
+        :param x1: system value at time t1
 
-        - x1: system value at time t1 (float).
+        :type x2: float
+        :param x2: system value at time t2
 
-        - x2: system value at time t2 (float).
+        :type t1: float
+        :param t1: last time point
 
-        - t1: last time point (float).
+        :type t2: float
+        :param t2: current time point
 
-        - t2: current time point (float).
-
-        OUTPUT:
-
-        - Derivative control value.
+        :output: derivative control value
         """
         control_value = -self.beta*(x2 - x1)/(t2 - t1)
 
@@ -175,19 +173,19 @@ class PIDControl():
         controller attribute mu.  A numerical approximation of the integral
         value is necessary to compute the output.
 
-        INPUT:
+        :type x1: float
+        :param x1: system value at time t1
 
-        - x1: system value at time t1 (float).
+        :type x2: float
+        :param x2: system value at time t2
 
-        - x2: system value at time t2 (float).
+        :type t1: float
+        :param t1: last time point
 
-        - t1: last time point (float).
+        :type t2: float
+        :param t2: current time point
 
-        - t2: current time point (float).
-
-        OUTPUT:
-
-        - Integral control value.
+        :output: integral control value
         """
         control_value = (self.integral - self.mu*(t2 - t1)
                          * (x1 - self.set_point + x2 - self.set_point)/2.0)
@@ -204,33 +202,38 @@ class Pendulum():
     Class implementation of a simple ODE solver for the inverted pendulum.
     Intended to be used in conjunction with the PIDControl class.  The solved
     ODE is of the form x''(t) = f(x(t)) + u(t).
+
+    Initialize with time parameters t_start, t_end, number of support
+    points N.  Initial values are given to the solve method for
+    flexibility in calculating solutions for different initial
+    conditions.  Right hand side can be adjusted, even though sine and
+    identity are the most reasonable choices.
     """
 
     def __init__(self, t_start, t_end, N, f, L=0.1, G=9.81):
         """
-        Initialize second order ODE solver for given time parameters t_start,
-        t_end, number of support points N.  Initial values are given to the
-        solve method for flexibility in calculating solutions for different
-        initial conditions.  Right hand side can be adjusted, even though sine
-        and identity are the most reasonable choices.
+        Initialize linear or nonlinear pendulum.
 
-        INPUT:
+        :type t_start: float
+        :param t_start: starting time for ODE solving
 
-        - t_start: Starting time for ODE solving (float).
+        :type t_end: float > t_start
+        :param t_end: final time for ODE solving
 
-        - t_end: Final time for ODE solving (float > t_start).
+        :type N: int > 0
+        :param N: number of numerical support points for ODE solving
 
-        - N: Number of numerical support points for ODE solving (int > 0).
+        :type f: function
+        :param f: right hand side for the second order pendulum ODE
 
-        - f: Right hand side for the second order pendulum ODE (funtion).
+        :type L: float
+        :param L: pendulum length parameter in [m]
 
-        - L: Pendulum length parameter in [m] (float > 0).
+        :type G: float > 0
+        :param G: gravitational constant in [m/s^2]
 
-        - G: Gravitational constant in [m/s^2] (float > 0).
-
-        OUTPUT:
-
-        - Object representing the second order ODE with right hand side f.
+        :output: object representing the second order pendulum ODE with
+                 right hand side f.
         """
         self.t_start = t_start
         self.t_end = t_end
@@ -240,7 +243,7 @@ class Pendulum():
         self.G = G
 
         # Calculate time step width:
-        self.h = (t_end - t_start)/N
+        self.h = (self.t_end - self.t_start)/self.N
         # Define array with time support points:
         self.t = [(self.t_start + i*self.h) for i in range(self.N + 1)]
 
@@ -251,33 +254,39 @@ class Pendulum():
         initial angle and velocity, and with PID controller, that has the
         given parameters.
 
-        INPUT:
+        :type phi0: float
+        :param phi0: initial value
 
-        - phi0: Initial value (float).
+        : type phi0_dot: float
+        :param phi0_dot: initial angular velocity
 
-        - phi0_dot: Initial velocity (float).
+        :type alpha: float > 0
+        :param alpha: proportional control parameter
 
-        - alpha: Proportional control parameter (float > 0).
+        :type beta: float > 0
+        :param beta: derivative control parameter
 
-        - beta: Derivative control parameter (float > 0).
+        :type mu: float > 0
+        :param mu: integral control parameter
 
-        - mu: Integral control parameter (float > 0).
+        :type max_control: float > 0
+        :param max_control: controller output bound
 
-        - max_control: Controller output bound (float > 0).
+        :type frequency: int >= 1
+        :param frequency: controller speed parameter
 
-        - frequency: Controller speed parameter (int >= 1).
+        :type deadband: float
+        :param deadband: minimum difference between calculated control
+                         outputs
 
-        - deadband: Minimum difference between calculated control outputs
-                    (float).
+        :type set_point: float
+        :param set_point: desired value of controlled system
 
-        - set_point: Desired value of controlled system (float).
+        :type precision: int > 0
+        :param precision: measurement precision of controller input
 
-        - precision: Measurement precision of controller input (int > 0).
-
-        OUTPUT:
-
-        - Numerically calculates the attributes (float arrays) phi,
-          output_array, P_array, I_array and D_array.
+        :output: numerically calculates the attributes (float arrays)
+                 phi, output_array, P_array, I_array and D_array.
         """
         self.phi0 = phi0
         self.phi0_dot = phi0_dot
@@ -305,7 +314,7 @@ class Pendulum():
                                      self.set_point, self.deadband)
 
         # Integrate the controlled ODE:
-        for n in range(1, N):
+        for n in range(1, self.N):
             # Calculate the current control value:
             u_n = self.controller.total_output(self.phi[n-1], self.phi[n],
                                                self.t[n-1], self.t[n],
@@ -333,36 +342,60 @@ class Pendulum():
     def solve_from_angles(self, phi0, phi1, alpha, beta, mu, max_control,
                           frequency, deadband, set_point, precision):
         """
-        Method solving the ODE for given numerical initial conditions, i.e. two
-        initial angles.  Works exactly like the solve() method.
+        Method solving the ODE for given numerical initial conditions,
+        i.e. two initial angles.  Works exactly like the solve() method.
 
-        INPUT:
+        :type phi0: float
+        :param phi0: first initial value
 
-        - phi0: First initial value (float).
+        :type phi1: float
+        :param phi1: second initial value
 
-        - phi1: Second initial value (float).
+        :type alpha: float > 0
+        :param alpha: proportional control parameter
 
-        - alpha: Proportional control parameter (float > 0).
+        :type beta: float > 0
+        :param beta: derivative control parameter
 
-        - beta: Derivative control parameter (float > 0).
+        :type mu: float > 0
+        :param mu: integral control parameter
 
-        - mu: Integral control parameter (float > 0).
+        :type max_control: float > 0
+        :param max_control: controller output bound
 
-        - max_control: Controller output bound (float > 0).
+        :type frequency: int >= 1
+        :param frequency: controller speed parameter
 
-        - frequency: Controller speed parameter (int >= 1).
+        :type deadband: float
+        :param deadband: minimum difference between calculated control
+                         outputs
 
-        - deadband: Minimum difference between calculated control outputs
-                    (float).
+        :type set_point: float
+        :param set_point: desired value of controlled system
 
-        - set_point: Desired value of controlled system (float).
+        :type precision: int > 0
+        :param precision: measurement precision of controller input
 
-        - precision: Measurement precision of controller input (int > 0).
+        :output: Numerically calculates the attributes (float arrays)
+                 phi, output_array, P_array, I_array and D_array.
 
-        OUTPUT:
-
-        - Numerically calculates the attributes (float arrays) phi,
-          output_array, P_array, I_array and D_array.
+        >>> import numpy as np; from PID_control import *
+        >>> ALPHA = 4.4; BETA = 2.0; MU = 1.2; MAX_CONTROL = 2.6
+        >>> FREQUENCY = 30; DEADBAND = 0.01; SET_POINT = -0.0*np.pi
+        >>> PRECISION = 5; t_start = 0.0; t_end = 45.0; N = 9000; LENGTH = 0.1
+        >>> phi0 = 0.5 * np.pi; phi0_dot = 0.3 * np.pi
+        >>> pendulum = Pendulum(t_start, t_end, N, np.sin, L=LENGTH)
+        >>> phi1 = phi0_dot + phi0_dot*pendulum.h
+        >>> x = pendulum.solve(
+        ... phi0, phi0_dot, ALPHA, BETA, MU, MAX_CONTROL, FREQUENCY, DEADBAND,
+        ... SET_POINT, PRECISION
+        ... )
+        >>> y = pendulum.solve_from_angles(
+        ... phi0, phi1, ALPHA, BETA, MU, MAX_CONTROL, FREQUENCY, DEADBAND,
+        ... SET_POINT, PRECISION
+        ... )
+        >>> print(x == y)
+        True
         """
         self.phi0 = phi0
         self.phi1 = phi1
@@ -390,7 +423,7 @@ class Pendulum():
                                      self.set_point, self.deadband)
 
         # Integrate the controlled ODE:
-        for n in range(1, N):
+        for n in range(1, self.N):
             # Calculate the current control value:
             u_n = self.controller.total_output(self.phi[n-1], self.phi[n],
                                                self.t[n-1], self.t[n],
@@ -420,26 +453,25 @@ class Pendulum():
         can be written in the filename.  This might be useful for numerical
         experiments with several distinct sets of parameters.
 
-        INPUT:
+        :type file_name: string
+        :param file_name: name for the .png file, in which the solution
+                          gets stored
 
-        - file_name: Name for the .png file, in which the solution is stored
-                     (string).
+        :type parameter: bool
+        :param parameter: if true, controller parameters are written in
+                          the filename
 
-        - parameter: If True, controller parameters are written in the filename
-                     (Bool).
-
-        TODO:
-
-        - Fix naming scheme (Linear vs Nonlinear; testing for
-          (lambda x: x) == self.f is not implemented very nicely).
+        :todo: fix naming scheme (Linear vs Nonlinear; testing for
+               (lambda x: x) == self.f is not implemented very nicely).
         """
-        # Plot time dependencies of system, i.e. angle phi, and control output:
+        # Plot time dependencies of system, i.e. angle phi, and control
+        # output:
         plt.figure()
         plt.plot(self.t, self.phi, "g-", label="Pendulum Angle")
 
-        # Try to fit the correct name to the kind of pendulum integrated.  This
-        # fails to make sense, if self.f is anything else than np.sin or
-        # (lambda x: x)
+        # Try to fit the correct name to the kind of pendulum
+        # integrated.  This fails to make sense, if self.f is anything
+        # else than np.sin or (lambda x: x)!
         if self.f == np.sin:
             name = " Nonlinear "
         elif (self.f(np.e) == np.e) and (self.f(np.sqrt(2)) == np.sqrt(2)):
@@ -556,12 +588,12 @@ if __name__ == '__main__':
 
 
 ###############################################################################
-# TODO: Implement and investigate (random) noise; use PERTURBATION parameter or
+# :todo: Implement and investigate (random) noise; use PERTURBATION parameter or
 #       maybe even a stochastic function of time
-# TODO: Implement optimality criteria (at least speed of first achieving the
+# :todo: Implement optimality criteria (at least speed of first achieving the
 #       set point and overswing width around the set point).
-# TODO: Implement functionality for variable set point.
-# TODO: Implement integral anti-windup (deactivate integrator, if difference
+# :todo: Implement functionality for variable set point.
+# :todo: Implement integral anti-windup (deactivate integrator, if difference
 #       between system value and set point is too small)?
-# TODO: Implement (in ODE) friction.
+# :todo: Implement (in ODE) friction.
 ###############################################################################
