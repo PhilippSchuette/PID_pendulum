@@ -478,6 +478,8 @@ class Pendulum():
         """
         A convenience method that returns the calculated function values
         or an empty list if `solve' was never called on this pendulum.
+
+        :output: array containing phi values (floats)
         """
         if hasattr(self, "phi"):
             return self.phi
