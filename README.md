@@ -48,6 +48,7 @@ flask run # now, visit localhost:5000 in a web browser
 If the webserver is running, API requests can be send to the route `/api/v1`. The following script demonstrates that:
 
 ```bash
+cd utils
 ./req_api.sh # performs an API request with valid parameters
 ./req_api.sh err # performs an API request with invalid parameters
 ```
