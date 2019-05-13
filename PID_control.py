@@ -60,6 +60,15 @@ class PIDControl():
 
         :type deadband: float > 0
         :param deadband: minimum difference for controller adjustment
+
+        >>> import numpy as np; from PID_control import *
+        >>> ALPHA = 4.4; BETA = 2.0; MU = 1.2; MAX_CONTROL = 2.6
+        >>> FREQUENCY = 30; DEADBAND = 0.01; SET_POINT = -0.0*np.pi
+        >>> controller = PIDControl(
+        ... ALPHA, BETA, MU, FREQUENCY, MAX_CONTROL, SET_POINT, DEADBAND
+        ... )
+        >>> print(controller)
+        PID Controller with alpha = 4.4, beta = 2.0, mu = 1.2
         """
         self.alpha = alpha
         self.beta = beta
@@ -79,6 +88,14 @@ class PIDControl():
 
         # Attribute to keep track of controller speed:
         self.action = 0
+
+    def __repr__(self):
+        """
+        Return string representation of PID controller.
+        """
+        return("PID Controller with alpha = {}, beta = {}, mu = {}".format(
+            self.alpha, self.beta, self.mu
+        ))
 
     def total_output(self, x1, x2, t1, t2, precision=4):
         """
@@ -247,6 +264,12 @@ class Pendulum():
         # Define array with time support points:
         self.t = [(self.t_start + i*self.h) for i in range(self.N + 1)]
 
+    def __repr__(self):
+        """
+        Return string representation of inverted pendulum.
+        """
+        return("Inverted Pendulum of Length {}".format(self.L))
+
     def solve(self, phi0, phi0_dot, alpha, beta, mu, max_control, frequency,
               deadband, set_point, precision):
         """
@@ -385,6 +408,8 @@ class Pendulum():
         >>> PRECISION = 5; t_start = 0.0; t_end = 45.0; N = 9000; LENGTH = 0.1
         >>> phi0 = 0.5 * np.pi; phi0_dot = 0.3 * np.pi
         >>> pendulum = Pendulum(t_start, t_end, N, np.sin, L=LENGTH)
+        >>> pendulum
+        Inverted Pendulum of Length 0.1
         >>> phi1 = phi0 + phi0_dot*pendulum.h
         >>> pendulum.solve(
         ... phi0, phi0_dot, ALPHA, BETA, MU, MAX_CONTROL, FREQUENCY, DEADBAND,

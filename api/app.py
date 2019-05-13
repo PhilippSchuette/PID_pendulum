@@ -6,6 +6,7 @@
 import numpy as np
 from flask import Flask, jsonify, request
 
+from PID_pendulum.PID_control import PIDControl
 from PID_pendulum.PID_control import Pendulum
 
 app = Flask(__name__, static_url_path="/static")
@@ -23,7 +24,9 @@ def api():
         - nonlinear=True
         - phi0, phi0_dot
         - L=0.1
-        - max_control, frequency, deadband, set_point, precision
+        - max_control, deadband, set_point
+        - precision=5
+        - frequency=10
         - API key
     """
     required = [
@@ -31,7 +34,8 @@ def api():
         "deadband", "set_point", "precision", "key"
     ]  # list of required params
     optional = {
-        "t_start": 0, "t_end": 30, "N": 3000, "nonlinear": True, "L": 0.1
+        "t_start": 0, "t_end": 30, "N": 3000, "nonlinear": True, "L": 0.1,
+        "frequency": 10, "precision": 5
     }  # dict of optional params and default values
 
     # get params from URL and save them to a dict
@@ -52,16 +56,17 @@ def api():
 
     # TODO: instantiate PIDControl object and return its results
     pendulum = Pendulum(
-        int(params["t_start"]), int(params["t_end"]),
+        float(params["t_start"]), float(params["t_end"]),
         int(params["N"]), np.sin, 0.1
     )
-    pendulum.solve(
-        int(params["phi0"]), int(params["phi0_dot"]), int(params["alpha"]),
-        int(params["beta"]), int(params["mu"]), int(params["max_control"]),
-        int(params["frequency"]), int(params["deadband"]),
-        int(params["set_point"]), int(params["precision"])
-    )
     print(pendulum)
+    pendulum.solve(
+        float(params["phi0"]), float(params["phi0_dot"]),
+        float(params["alpha"]), float(params["beta"]), float(params["mu"]),
+        float(params["max_control"]), int(params["frequency"]),
+        float(params["deadband"]), float(params["set_point"]),
+        int(params["precision"])
+    )
 
     return jsonify(params)
 
