@@ -517,7 +517,7 @@ class Pendulum():
         )
 
         plt.xlabel("$t$ (s)", fontsize=15)
-        plt.ylabel("$\phi$ ($2\pi$)", fontsize=15)
+        plt.ylabel("$\phi$ ($2\pi$)", fontsize=15)  # noqa
         plt.tick_params(labelsize=15)
 
         plt.xlim(self.t_start, self.t_end)
@@ -614,13 +614,13 @@ if __name__ == '__main__':
     ode2.plot("linearPID", parameter=True)
 
 
-###############################################################################
-# :todo: Implement and investigate (random) noise; use PERTURBATION parameter or
-#       maybe even a stochastic function of time
+#############################################################################
+# :todo: Implement and investigate (random) noise; use PERTURBATION parameter
+#       or maybe even a stochastic function of time
 # :todo: Implement optimality criteria (at least speed of first achieving the
 #       set point and overswing width around the set point).
 # :todo: Implement functionality for variable set point.
 # :todo: Implement integral anti-windup (deactivate integrator, if difference
 #       between system value and set point is too small)?
 # :todo: Implement (in ODE) friction.
-###############################################################################
+#############################################################################

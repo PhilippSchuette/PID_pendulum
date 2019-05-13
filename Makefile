@@ -11,6 +11,7 @@ help:
 	@$(SPHINXBUILD) -M help "$(SOURCEDIR)" "$(BUILDDIR)" $(SPHINXOPTS) $(O)
 
 all:
+	flake8 PID_control.py
 	sudo -H pip3 install -e .
 	sudo python3 setup.py bdist_wheel
 	sudo -H pip3 install dist/PID_pendulum-0.0.1-py3-none-any.whl
