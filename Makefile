@@ -19,7 +19,7 @@ all:
 # don't use this target
 docs:
 	make latexpdf
-	cp _build/latex/PID_control.pdf docs/
+	cp _build/latex/PID_control.pdf docs/PID_control_docs.pdf
 
 .PHONY: help all docs Makefile
 
