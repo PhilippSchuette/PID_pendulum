@@ -2,6 +2,11 @@
     font-size: 1.1rem;
 }
 
+.body__graph-svg {
+    margin: 5px;
+    border: 3px solid black;
+}
+
 /* override some Bootstrap defaults */
 .navbar {
     height: 90px !important;
