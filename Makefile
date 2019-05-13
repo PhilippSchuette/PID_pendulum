@@ -1,9 +1,9 @@
 # Make an editable package.
 # Make a local package for import in api/app.py.
 all:
-	sudo pip3 install -e .
-	python3 setup.py bdist_wheel
-	sudo pip3 install dist/PID_pendulum-0.0.1-py3-none-any.whl
+	sudo -H pip3 install -e .
+	sudo python3 setup.py bdist_wheel
+	sudo -H pip3 install dist/PID_pendulum-0.0.1-py3-none-any.whl
 
 # Minimal makefile for Sphinx documentation
 
