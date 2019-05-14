@@ -7,7 +7,6 @@
 
 
 import numpy as np
-from PID_control import PIDControl
 from PID_control import Pendulum
 from PID_control import AnimatedPendulum
 
@@ -32,25 +31,22 @@ if __name__ == '__main__':
     # seems to be a good value for this particular parameter set.
     PERTURBATION = 0.0 * np.pi
 
-
     f1 = np.sin
-
 
     def f2(x):
         return(x + PERTURBATION)
-
 
     # The following is an unused prototype for a perturbed nonlinear pendulum:
     def f3(x):
         return(np.sin(x) + PERTURBATION)
 
-
     phi0 = 0.5 * np.pi
     phi0_dot = 0.3 * np.pi
 
-    # After specifying all necessary data, the Pendulum class solves the ODE
-    # within three statements:  creation of an appropriate Pendulum instance,
-    # a call to the solve() method and a call to the plot() method:
+    # After specifying all necessary data, the Pendulum class solves the
+    # ODE within three statements:  creation of an appropriate Pendulum
+    # instance, a call to the solve() method and a call to the plot()
+    # method:
     ode1 = Pendulum(t_start, t_end, N, f1, L=LENGTH)
     ode1.solve(phi0, phi0_dot, ALPHA, BETA, MU, MAX_CONTROL, FREQUENCY,
                DEADBAND, SET_POINT, PRECISION)
