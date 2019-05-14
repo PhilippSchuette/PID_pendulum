@@ -1,14 +1,21 @@
 #!/bin/python
 from setuptools import find_packages, setup
 
+version = "0.0.5"
+description = "Visit https://github.com/PhilippSchuette/PID_pendulum for" \
+    "additional information."
+
 setup(
     name="PID_pendulum",
-    version="0.0.4",
+    version=version,
     author="Philipp Schuette",
     author_email="p.schuette@online.de",
     description="A PID pendulum controller.",
+    long_description=description,
+    long_description_content_type="text/plain",
     url="https://github.com/PhilippSchuette/PID_pendulum",
     download_url="https://pypi.python.org/pypi/PID-pendulum",
+    license="GPLv3",
     packages=find_packages(),
     classifiers=[
         "Programming Language :: Python :: 3",

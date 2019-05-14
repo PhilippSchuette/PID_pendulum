@@ -13,27 +13,26 @@ This is a short description of the PID controlled pendulum project. The project 
 Additional features will be added in the future.
 
 ## Build Sources and Documentation
-Make sure to install the following dependencies with Python 3 (might require `pip3` on your system):
+Make sure to install the following dependencies with Python 3 (might require `pip3` on your system) if you want to build documentation or use the web server:
 
 - `pip install flask` for the web app
 - `pip install flake8` for linting
 - `pip install sphinx` for all documentation
 
 You might also need:
-- `make` for build from source
 - `LaTeX` for creating PDF documentation
 
 Then, run:
 
 ```bash
-make all # install the PID_pendulum package
+pip3 install PID-pendulum # install the PID_pendulum package
 make # show a list of documentation formats, e.g. `make latexpdf` creates PDF docs
 ```
 
 You can now import the pendulum in your code as follows:
 
 ```python
-from PID_pendulum.PID_control import Pendulum, PIDControl
+from PID_control import Pendulum, PIDControl
 # see documentation for pendulum and controller methods
 ```
 

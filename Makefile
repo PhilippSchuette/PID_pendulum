@@ -1,6 +1,6 @@
 # Make a local package for import in api/app.py and Sphinx documentation.
 # You can set these variables from the command line.
-VERSION := 0.0.2
+VERSION := 0.0.6
 
 SPHINXOPTS    =
 SPHINXBUILD   = sphinx-build
@@ -14,7 +14,7 @@ help:
 
 all:
 	flake8 PID_control.py
-	sudo python3 setup.py sdist
+	sudo python3 setup.py sdist bdist_wheel
 
 docs:
 	make latexpdf
