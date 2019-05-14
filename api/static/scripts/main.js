@@ -5,7 +5,7 @@
  * License: GPL-3.0
  * Date: 13/05/2019
  */
-const address = "http://localhost:5000/api/v1/?alpha=4.0&beta=1.5&mu=0.8&phi0=0.25&phi0_dot=0.25&max_control=3.0&frequency=10&deadband=5&set_point=0&precision=5&key=0&N=1000&t_end=100";
+const address = "http://localhost:5000/api/v1/?alpha=4.0&beta=1.5&mu=0.8&phi0=0.25&phi0_dot=0.25&max_control=3.0&frequency=10&deadband=0.01&set_point=0&precision=5&key=0&N=1000";
 
 function convert(data) {
     let res = [];
@@ -15,6 +15,7 @@ function convert(data) {
             time: data.support_values[i],
         });
     }
+    console.log(data);
     console.log(res);
     return res;
 }
