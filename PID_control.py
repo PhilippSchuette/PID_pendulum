@@ -632,7 +632,6 @@ class Pendulum():
             line.set_data(x, y)
             return line,
 
-
         anim = animation.FuncAnimation(
             fig, animate, init_func=init, frames=self.N, interval=2, blit=True
         )
@@ -757,10 +756,9 @@ class AnimatedPendulum():
         pendulum = Pendulum(self.t_start, self.t_end, self.N, self.f, self.L)
         pendulum.solve(
             self.phi0, self.phi0_dot, self.alpha, self.beta, self.mu,
-            self.max_control, self.frequency, self.deadband,self.set_point,
+            self.max_control, self.frequency, self.deadband, self.set_point,
             self.precision
         )
-
 
         # Define the function, that is animated, from pendulum data:
         def animate(i):
@@ -768,7 +766,6 @@ class AnimatedPendulum():
             y = pendulum.get_func_values()[:i]
             line.set_data(x, y)
             return line,
-
 
         anim = animation.FuncAnimation(
             fig, animate, init_func=init, frames=self.N, interval=2, blit=True
