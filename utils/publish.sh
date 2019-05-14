@@ -14,4 +14,5 @@ fi
 echo -e "${ANSI_GREEN}Creating distribution.\n${DELIM}${ANSI_RESET}"
 make all
 echo -e "${ANSI_GREEN}Publishing to PyPI.\n${DELIM}${ANSI_RESET}"
+python3 -m twine check dist/*
 python3 -m twine upload dist/*

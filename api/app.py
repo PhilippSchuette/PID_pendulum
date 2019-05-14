@@ -6,7 +6,7 @@
 import numpy as np
 from flask import Flask, jsonify, request
 
-from PID_pendulum.PID_control import Pendulum
+from PID_control import Pendulum
 
 app = Flask(__name__, static_url_path="/static")
 
