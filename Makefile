@@ -1,6 +1,6 @@
 # Make a local package for import in api/app.py and Sphinx documentation.
 # You can set these variables from the command line.
-VERSION := 0.0.6
+VERSION := 0.0.8
 
 SPHINXOPTS    =
 SPHINXBUILD   = sphinx-build
@@ -13,7 +13,7 @@ help:
 	@$(SPHINXBUILD) -M help "$(SOURCEDIR)" "$(BUILDDIR)" $(SPHINXOPTS) $(O)
 
 all:
-	flake8 PID_control.py
+	flake8 PID_pendulum/PID_control.py
 	sudo python3 setup.py sdist bdist_wheel
 
 docs:

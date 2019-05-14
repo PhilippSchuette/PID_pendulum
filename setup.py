@@ -1,9 +1,9 @@
 #!/bin/python
 from setuptools import find_packages, setup
 
-version = "0.0.5"
+version = "0.0.8"
 description = "Visit https://github.com/PhilippSchuette/PID_pendulum for" \
-    "additional information."
+    " additional information."
 
 setup(
     name="PID_pendulum",

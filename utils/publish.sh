@@ -12,7 +12,10 @@ if [ "$TWINE" = '' ]; then
 fi
 
 echo -e "${ANSI_GREEN}Creating distribution.\n${DELIM}${ANSI_RESET}"
+make clean
 make all
 echo -e "${ANSI_GREEN}Publishing to PyPI.\n${DELIM}${ANSI_RESET}"
 python3 -m twine check dist/*
 python3 -m twine upload dist/*
+echo -e "${ANSI_GREEN}Cleaning up.\n${DELIM}${ANSI_RESET}"
+make clean
