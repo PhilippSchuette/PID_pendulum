@@ -615,12 +615,19 @@ if __name__ == '__main__':
     # Perturbation could perhaps be randomized;  something like (0.01*np.pi)
     # seems to be a good value for this particular parameter set.
     PERTURBATION = 0.0 * np.pi
+
+
     f1 = np.sin
 
-    def f2(x): return x + PERTURBATION
+
+    def f2(x):
+        return(x + PERTURBATION)
+
 
     # The following is an unused prototype for a perturbed nonlinear pendulum:
-    def f3(x): return np.sin(x) + PERTURBATION
+    def f3(x):
+        return(np.sin(x) + PERTURBATION)
+
 
     phi0 = 0.5 * np.pi
     phi0_dot = 0.3 * np.pi
