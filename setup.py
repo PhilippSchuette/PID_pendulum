@@ -3,11 +3,12 @@ from setuptools import find_packages, setup
 
 setup(
     name="PID_pendulum",
-    version="0.0.3",
+    version="0.0.4",
     author="Philipp Schuette",
     author_email="p.schuette@online.de",
     description="A PID pendulum controller.",
     url="https://github.com/PhilippSchuette/PID_pendulum",
+    download_url="https://pypi.python.org/pypi/PID-pendulum",
     packages=find_packages(),
     classifiers=[
         "Programming Language :: Python :: 3",
