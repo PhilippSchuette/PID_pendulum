@@ -12,11 +12,15 @@
 # and non-linear pendulum and an optimization algorithm for optimal
 # control parameters with respect to multiple optimality criteria.
 #
+# For debugging and testing purposes, use the file debug.py!
+#
 # Author: Philipp Schuette
 # License: GPL-3.0
 # Date: 20/04/2019
 import matplotlib.pyplot as plt
 import numpy as np
+
+from matplotlib import animation
 
 
 ##################
@@ -250,7 +254,7 @@ class Pendulum():
         :param G: gravitational constant in [m/s^2]
 
         :output: object representing the second order pendulum ODE with
-                 right hand side f.
+                 right hand side f
         """
         self.t_start = t_start
         self.t_end = t_end
@@ -309,7 +313,7 @@ class Pendulum():
         :param precision: measurement precision of controller input
 
         :output: numerically calculates the attributes (float arrays)
-                 phi, output_array, P_array, I_array and D_array.
+                 phi, output_array, P_array, I_array and D_array
         """
         self.phi0 = phi0
         self.phi0_dot = phi0_dot
@@ -400,7 +404,7 @@ class Pendulum():
         :param precision: measurement precision of controller input
 
         :output: Numerically calculates the attributes (float arrays)
-                 phi, output_array, P_array, I_array and D_array.
+                 phi, output_array, P_array, I_array and D_array
 
         >>> import numpy as np; from PID_control import *
         >>> ALPHA = 4.4; BETA = 2.0; MU = 1.2; MAX_CONTROL = 2.6
@@ -501,7 +505,8 @@ class Pendulum():
 
     def plot(self, file_name, parameter=False):
         """
-        Method to plot solutions generated with Pendulum class. PID Parameters
+        Method to plot solutions generated with Pendulum class.  One needs to
+        call the solve() method, before plot() can be called.  PID Parameters
         can be written in the filename.  This might be useful for numerical
         experiments with several distinct sets of parameters.
 
@@ -592,58 +597,189 @@ class Pendulum():
             plt.savefig("pics/" + file_name + "_2.png")
         plt.show()
 
+    def animate(self, anim_name):
+        """
+        Method to animate solutions generated with Pendulum class.  One
+        needs to call the solve() method, before plot() makes sense.
 
-################################################
-# Debugging of PIDControl and Pendulum classes #
-################################################
-if __name__ == '__main__':
-    # Set PID control parameters:
-    ALPHA = 4.4
-    BETA = 2.0
-    MU = 1.2
-    MAX_CONTROL = 2.6
-    FREQUENCY = 30
-    DEADBAND = 0.01
-    SET_POINT = -0.0 * np.pi
-    PRECISION = 5
+        :type anim_name: string
+        :param anim_name: name for the mp4 file, in which the animation
+                          gets stored
+        """
+        # Set up formatting for the movie files:
+        Writer = animation.writers['ffmpeg']
+        writer = Writer(fps=35, bitrate=1800)
 
-    t_start = 0.0
-    t_end = 45.0
-    N = 9000
-    LENGTH = 0.1
+        fig = plt.figure()
+        ax = plt.axes(xlim=(self.t_start, self.t_end), ylim=(
+            -self.max_control - 0.01, self.max_control + 0.01
+        ))
+        plt.grid(True)
+        line, = ax.plot([], [], lw=2)
 
-    # Perturbation could perhaps be randomized;  something like (0.01*np.pi)
-    # seems to be a good value for this particular parameter set.
-    PERTURBATION = 0.0 * np.pi
+        plt.xlabel('$t$')
+        plt.ylabel('$\phi$')
 
+        # Initialize the animation:
+        def init():
+            line.set_data([], [])
+            return line,
 
-    f1 = np.sin
-
-
-    def f2(x):
-        return(x + PERTURBATION)
-
-
-    # The following is an unused prototype for a perturbed nonlinear pendulum:
-    def f3(x):
-        return(np.sin(x) + PERTURBATION)
+        # Define the function, that is animated, from pendulum solution data:
+        def animate(i):
+            x = self.t[:i]
+            y = self.phi[:i]
+            line.set_data(x, y)
+            return line,
 
 
-    phi0 = 0.5 * np.pi
-    phi0_dot = 0.3 * np.pi
+        anim = animation.FuncAnimation(
+            fig, animate, init_func=init, frames=self.N, interval=2, blit=True
+        )
 
-    # After specifying all necessary data, the Pendulum class solves the ODE
-    # within three statements:  creation of an appropriate Pendulum instance,
-    # a call to the solve() method and a call to the plot() method:
-    ode1 = Pendulum(t_start, t_end, N, f1, L=LENGTH)
-    ode1.solve(phi0, phi0_dot, ALPHA, BETA, MU, MAX_CONTROL, FREQUENCY,
-               DEADBAND, SET_POINT, PRECISION)
-    ode1.plot("nonlinearPID", parameter=True)
+        # Saves with the formatting set up earlier:
+        try:
+            anim.save("pics/" + anim_name + ".mp4", writer=writer)
+        except FileNotFoundError:
+            print("Warning: Please create directory `pics' to save animation.")
+            exit(1)
 
-    ode2 = Pendulum(t_start, t_end, N, f2, L=LENGTH)
-    ode2.solve(phi0, phi0_dot, ALPHA, BETA, MU, MAX_CONTROL, FREQUENCY,
-               DEADBAND, SET_POINT, PRECISION)
-    ode2.plot("linearPID", parameter=True)
+
+################################
+# Animated Controlled Pendulum #
+################################
+class AnimatedPendulum():
+    """
+    Class especially tailored to creating, solving and finally animating
+    a controlled inverted pendulum. While the Pendulum class method
+    animate() can be called after solving the pendulum ODE with solve(),
+    the AnimatedPendulum class wraps these steps. Simply create an
+    instance and call the animate() method.
+    """
+
+    def __init__(self, phi0, phi0_dot, alpha, beta, mu, max_control, frequency,
+                 deadband, set_point, precision, t_start, t_end, N, L, f):
+        """
+        :type phi0: float
+        :param phi0: initial angle value
+
+        :type phi0_dot: float
+        :param phi0_dot: initial angle velocity value
+
+        :type alpha: float > 0
+        :param alpha: proportional control parameter
+
+        :type beta: float > 0
+        :param beta: derivative control parameter
+
+        :type mu: float > 0
+        :param mu: integral control parameter
+
+        :type max_control: float > 0
+        :param max_control: controller output bound
+
+        :type frequency: int >= 1
+        :param frequency: controller speed parameter
+
+        :type deadband: float
+        :param deadband: minimum difference between calculated control
+                         outputs
+
+        :type set_point: float
+        :param set_point: desired value of controlled system
+
+        :type precision: int > 0
+        :param precision: measurement precision of controller input
+
+        :type t_start: float
+        :param t_start: starting time for pendulum dynamics
+
+        :type t_end: float > t_start
+        :param t_end: ending time for pendulum dynamics
+
+        :type N: int > 0
+        :param N: number of support points
+
+        :type L: float > 0
+        :param L: pendulum length
+
+        :type f: function
+        :param f: right hand side for pendulum ODE
+
+        :output: Creates an instance of a pendulum, waiting to be
+                 animated
+        """
+        self.phi0 = phi0
+        self.phi0_dot = phi0_dot
+        self.alpha = alpha
+        self.beta = beta
+        self.mu = mu
+        self.max_control = max_control
+        self.frequency = frequency
+        self.deadband = deadband
+        self.set_point = set_point
+        self.precision = precision
+        self.t_start = t_start
+        self.t_end = t_end
+        self.N = N
+        self.L = L
+        self.f = f
+
+    def animate(self, anim_name):
+        """
+        Animates an instance of AnimatedPendulum.
+
+        :type anim_name: string
+        :param anim_name: name for the mp4 file, in which the animation
+                          gets stored
+        """
+        # Set up formatting for the movie files:
+        Writer = animation.writers['ffmpeg']
+        writer = Writer(fps=35, bitrate=1800)
+
+        fig = plt.figure()
+        ax = plt.axes(xlim=(self.t_start, self.t_end), ylim=(
+            -self.max_control - 0.01, self.max_control + 0.01
+        ))
+        plt.grid(True)
+        line, = ax.plot([], [], lw=2)
+
+        plt.xlabel('$t$')
+        plt.ylabel('$\phi$')
+
+        # Initialize the animation:
+        def init():
+            line.set_data([], [])
+            return line,
+
+        # Initialize pendulum, this differentiations AnimatedPendulum
+        # method animate() from Pendulum method animate():
+        pendulum = Pendulum(self.t_start, self.t_end, self.N, self.f, self.L)
+        pendulum.solve(
+            self.phi0, self.phi0_dot, self.alpha, self.beta, self.mu,
+            self.max_control, self.frequency, self.deadband,self.set_point,
+            self.precision
+        )
+
+
+        # Define the function, that is animated, from pendulum data:
+        def animate(i):
+            x = pendulum.get_support_values()[:i]
+            y = pendulum.get_func_values()[:i]
+            line.set_data(x, y)
+            return line,
+
+
+        anim = animation.FuncAnimation(
+            fig, animate, init_func=init, frames=self.N, interval=2, blit=True
+        )
+
+        # Saves with the formatting set up earlier:
+        try:
+            anim.save("pics/" + anim_name + ".mp4", writer=writer)
+        except FileNotFoundError:
+            print("Warning: Please create directory `pics' to save animation.")
+            exit(1)
 
 
 ###############################################################################
