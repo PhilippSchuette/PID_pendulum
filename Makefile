@@ -13,7 +13,7 @@ help:
 all:
 	flake8 PID_control.py
 	sudo -H pip3 install -e .
-	sudo python3 setup.py bdist_wheel
+	sudo python3 setup.py sdist bdist_wheel
 	sudo -H pip3 install dist/PID_pendulum-0.0.1-py3-none-any.whl
 
 # don't use this target
