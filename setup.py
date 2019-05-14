@@ -3,7 +3,7 @@ from setuptools import find_packages, setup
 
 setup(
     name="PID_pendulum",
-    version="0.0.1",
+    version="0.0.2",
     author="Philipp Schuette",
     author_email="p.schuette@online.de",
     description="A PID pendulum controller.",

@@ -75,7 +75,7 @@ window.onload = () => {
     const animationSpeed = 200; /* one animation per `x' millisecs */
     const numFrames = 100;      /* `x' animations total */
 
-    for (let i=0; i<numFrames; i++) {
+    for (let i=1; i<numFrames; i++) {
         setTimeout(() => {
         fetch(address+i, { method: "get" })
             .then(resp => resp.json())
