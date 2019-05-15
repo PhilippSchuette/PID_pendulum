@@ -1,7 +1,5 @@
 # Make a local package for import in api/app.py and Sphinx documentation.
 # You can set these variables from the command line.
-VERSION := 0.0.8
-
 SPHINXOPTS    =
 SPHINXBUILD   = sphinx-build
 SPHINXPROJ    = PID_control

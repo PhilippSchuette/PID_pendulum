@@ -6,15 +6,7 @@
 import numpy as np
 from flask import Flask, jsonify, request
 
-# try different import paths
-try:
-    from PID_control import Pendulum
-except Exception:
-    try:
-        from PID_pendulum.PID_control import Pendulum
-    except Exception:
-        print("Error: Both import paths did not work.")
-        exit(1)
+from PID_pendulum.PID_control import Pendulum
 
 app = Flask(__name__, static_url_path="/static")
 

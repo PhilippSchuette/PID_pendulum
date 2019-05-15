@@ -32,12 +32,12 @@ make # show a list of documentation formats, e.g. `make latexpdf` creates PDF do
 You can now import the pendulum in your code as follows:
 
 ```python
-from PID_control import Pendulum, PIDControl
+from PID_pendulum.PID_control import Pendulum, PIDControl
 # see documentation for pendulum and controller methods
 ```
 
 ## Web API and Demonstration
-An online demonstration of the PID pendulum controller implementation will be available soon. To run the web app locally though, run:
+An online demonstration of the PID pendulum controller implementation is [available here](https://pid-pendulum-demo.herokuapp.com/). To run the web app locally though, type:
 
 ```bash
 cd api
@@ -52,7 +52,7 @@ cd utils
 ./req_api.sh err # performs an API request with invalid parameters
 ```
 
-Currently, the API simply echos the given parameters or returns an error if a required parameter was not provided. Soon, the API will return `json` containing the function values that correspond to the user-provided arguments.
+The API returns a `json` object with two arrays containing the function and support values that correspond to the user-provided arguments.
 
 ## License
 The code in this repository is [GPL-3.0 licensed](./LICENSE.md). `html` and `css` files are not distributed under any license if not stated otherwise in the files themselves.
