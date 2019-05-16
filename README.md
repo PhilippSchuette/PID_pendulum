@@ -13,20 +13,19 @@ This is a short description of the PID controlled pendulum project. The project 
 Additional features will be added in the future.
 
 ## Build Sources and Documentation
-Make sure to install the following dependencies with Python 3 (might require `pip3` on your system):
+Make sure to install the following dependencies with Python 3 (might require `pip3` on your system) if you want to build documentation or use the web server:
 
 - `pip install flask` for the web app
 - `pip install flake8` for linting
 - `pip install sphinx` for all documentation
 
 You might also need:
-- `make` for build from source
 - `LaTeX` for creating PDF documentation
 
 Then, run:
 
 ```bash
-make all # install the PID_pendulum package
+pip3 install PID-pendulum # install the PID_pendulum package
 make # show a list of documentation formats, e.g. `make latexpdf` creates PDF docs
 ```
 
@@ -38,7 +37,7 @@ from PID_pendulum.PID_control import Pendulum, PIDControl
 ```
 
 ## Web API and Demonstration
-An online demonstration of the PID pendulum controller implementation will be available soon. To run the web app locally though, run:
+An online demonstration of the PID pendulum controller implementation is [available here](https://pid-pendulum-demo.herokuapp.com/). To run the web app locally though, type:
 
 ```bash
 cd api
@@ -53,7 +52,7 @@ cd utils
 ./req_api.sh err # performs an API request with invalid parameters
 ```
 
-Currently, the API simply echos the given parameters or returns an error if a required parameter was not provided. Soon, the API will return `json` containing the function values that correspond to the user-provided arguments.
+The API returns a `json` object with two arrays containing the function and support values that correspond to the user-provided arguments.
 
 ## License
 The code in this repository is [GPL-3.0 licensed](./LICENSE.md). `html` and `css` files are not distributed under any license if not stated otherwise in the files themselves.

@@ -11,17 +11,17 @@ help:
 	@$(SPHINXBUILD) -M help "$(SOURCEDIR)" "$(BUILDDIR)" $(SPHINXOPTS) $(O)
 
 all:
-	flake8 PID_control.py
-	sudo -H pip3 install -e .
-	sudo python3 setup.py bdist_wheel
-	sudo -H pip3 install dist/PID_pendulum-0.0.1-py3-none-any.whl
+	flake8 PID_pendulum/PID_control.py
+	sudo python3 setup.py sdist bdist_wheel
 
-# don't use this target
 docs:
 	make latexpdf
 	cp _build/latex/PID_control.pdf docs/PID_control_docs.pdf
 
-.PHONY: help all docs Makefile
+clean:
+	sudo rm -rf _build build dist PID_pendulum.egg-info
+
+.PHONY: help all docs clean Makefile
 
 # Catch-all target: route all unknown targets to Sphinx using the new
 # "make mode" option.  $(O) is meant as a shortcut for $(SPHINXOPTS).

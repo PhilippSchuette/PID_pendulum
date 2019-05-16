@@ -5,7 +5,10 @@
  * License: GPL-3.0
  * Date: 13/05/2019
  */
-const address = "http://localhost:5000/api/v1/?alpha=4.0&beta=1.5&mu=0.8&phi0=0.25&phi0_dot=0.25&max_control=3.0&frequency=10&deadband=5&set_point=0&precision=5&key=0&N=1000&t_end=100";
+const baseURL = "https://pid-pendulum-demo.herokuapp.com"
+const APIRoute = "/api/v1/"
+const request = "?alpha=4.0&beta=1.5&mu=0.8&phi0=0.25&phi0_dot=0.25&max_control=3.0&frequency=10&deadband=0.01&set_point=0&precision=5&key=0&t_end=";
+const address = baseURL + APIRoute + request
 
 function convert(data) {
     let res = [];
@@ -15,6 +18,7 @@ function convert(data) {
             time: data.support_values[i],
         });
     }
+    console.log(data);
     console.log(res);
     return res;
 }
@@ -27,6 +31,8 @@ function plot(data) {
     const width = svgWidth - margins.left - margins.right;
     const height = svgHeight - margins.top - margins.bottom;
 
+    // clear svg and all child nodes, then recreate svg
+    d3.selectAll("svg > *").remove();
     let svg = d3.select("svg")
         .attr("width", svgWidth)
         .attr("height", svgHeight);
@@ -50,10 +56,10 @@ function plot(data) {
         .call(d3.axisLeft(y))
         .append("text")
         .attr("fill", "#000")
-        .attr("font-size", "20px")
+        .attr("font-size", "14px")
         .attr("transform", "rotate(-90)")
         .attr("y", 6)
-        .attr("dy", "-1.7em")
+        .attr("dy", "-3.1em")
         .attr("dx", -height/2+24)
         .attr("text-anchor", "end")
         .text("Angle");
@@ -69,11 +75,18 @@ function plot(data) {
 }
 
 window.onload = () => {
-    fetch(address, { method: "get" })
-        .then(resp => resp.json())
-        .then(json => { plot(convert(json)); })
-        .catch(err => {
-            console.log(`Error: ${err}`);
-            return;
-        });
+    const animationSpeed = 200; /* one animation per `x' millisecs */
+    const numFrames = 100;      /* `x' animations total */
+
+    for (let i=1; i<numFrames; i++) {
+        setTimeout(() => {
+        fetch(address+i, { method: "get" })
+            .then(resp => resp.json())
+            .then(json => { plot(convert(json)); })
+            .catch(err => {
+                console.log(`Error: ${err}`);
+                return;
+            });
+        }, animationSpeed*i);
+    }
 }
