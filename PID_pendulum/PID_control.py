@@ -19,7 +19,6 @@
 # Date: 20/04/2019
 import matplotlib.pyplot as plt
 import numpy as np
-
 from matplotlib import animation
 
 

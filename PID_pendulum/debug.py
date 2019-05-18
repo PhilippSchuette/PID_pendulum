@@ -1,15 +1,14 @@
+#!/bin/python
+#
 # This file is intended for debugging of the classes and methods in PID_control
 # only!
 #
 # Author: Philipp Schuette
 # License: GPL-3.0
 # Date: 14/05/2019
-
-
 import numpy as np
-from PID_control import Pendulum
-from PID_control import AnimatedPendulum
 
+from PID_control import AnimatedPendulum, Pendulum
 
 if __name__ == '__main__':
     # Set PID control parameters:
@@ -27,7 +26,7 @@ if __name__ == '__main__':
     N = 9000
     LENGTH = 0.1
 
-    # Perturbation could perhaps be randomized;  something like (0.01*np.pi)
+    # Perturbation could perhaps be randomized; something like (0.01*np.pi)
     # seems to be a good value for this particular parameter set.
     PERTURBATION = 0.0 * np.pi
 
