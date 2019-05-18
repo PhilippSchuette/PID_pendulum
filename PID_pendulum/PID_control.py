@@ -546,7 +546,7 @@ class Pendulum():
         )
 
         plt.xlabel("$t$ (s)", fontsize=15)
-        plt.ylabel("$\phi$ ($2\pi$)", fontsize=15)  # noqa
+        plt.ylabel("$\phi$ ($2\pi$)", fontsize=15)  # noqa: LaTeX escape seq
         plt.tick_params(labelsize=15)
 
         plt.xlim(self.t_start, self.t_end)
@@ -617,7 +617,7 @@ class Pendulum():
         line, = ax.plot([], [], lw=2)
 
         plt.xlabel('$t$')
-        plt.ylabel('$\phi$')
+        plt.ylabel('$\phi$')  # noqa: LaTeX escape seq
 
         # Initialize the animation:
         def init():
@@ -743,7 +743,7 @@ class AnimatedPendulum():
         line, = ax.plot([], [], lw=2)
 
         plt.xlabel('$t$')
-        plt.ylabel('$\phi$')
+        plt.ylabel('$\phi$')  # noqa: LaTeX escape seq
 
         # Initialize the animation:
         def init():

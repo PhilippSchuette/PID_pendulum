@@ -1,14 +1,15 @@
 # PID pendulum controller
+
+![PyPI](https://img.shields.io/pypi/v/PID_pendulum.svg)
+![PyPI - Wheel](https://img.shields.io/pypi/wheel/PID_pendulum.svg)
+
 ## Overview
 This is a short description of the PID controlled pendulum project. The project illustrates several concepts of real-world PID controllers, that theoretical descriptions often disregard. At the moment this includes
 
-- bounded controller output,
-
-- limited controller speed,
-
-- controller measurement imprecision,
-
-- incomplete system information.
+- bounded controller output
+- limited controller speed
+- controller measurement imprecision
+- incomplete system information
 
 Additional features will be added in the future.
 
