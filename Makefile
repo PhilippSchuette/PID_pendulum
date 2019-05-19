@@ -17,6 +17,7 @@ all:
 docs:
 	make latexpdf
 	cp _build/latex/PID_control.pdf docs/PID_control_docs.pdf
+	make doctest
 
 clean:
 	sudo rm -rf _build build dist PID_pendulum.egg-info
