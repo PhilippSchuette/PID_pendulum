@@ -3,7 +3,7 @@
 SPHINXOPTS    =
 SPHINXBUILD   = sphinx-build
 SPHINXPROJ    = PID_control
-SOURCEDIR     = .
+SOURCEDIR     = PID_pendulum
 BUILDDIR      = _build
 
 # Put it first so that "make" without argument is like "make help".

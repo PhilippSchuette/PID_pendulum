@@ -1,14 +1,14 @@
 #!/bin/python
 #
-# This file is intended for debugging of the classes and methods in PID_control
-# only!
+# This file is intended for debugging of the classes and methods in
+# PID_control only!
 #
 # Author: Philipp Schuette
 # License: GPL-3.0
 # Date: 14/05/2019
 import numpy as np
 
-from PID_control import AnimatedPendulum, Pendulum
+from PID_pendulum.PID_control import AnimatedPendulum, Pendulum
 
 if __name__ == '__main__':
     # Set PID control parameters:
@@ -26,8 +26,9 @@ if __name__ == '__main__':
     N = 9000
     LENGTH = 0.1
 
-    # Perturbation could perhaps be randomized; something like (0.01*np.pi)
-    # seems to be a good value for this particular parameter set.
+    # Perturbation could perhaps be randomized; something like
+    # (0.01*np.pi) seems to be a good value for this particular
+    # parameter set.
     PERTURBATION = 0.0 * np.pi
 
     f1 = np.sin
@@ -35,7 +36,8 @@ if __name__ == '__main__':
     def f2(x):
         return(x + PERTURBATION)
 
-    # The following is an unused prototype for a perturbed nonlinear pendulum:
+    # The following is an unused prototype for a perturbed nonlinear
+    # pendulum:
     def f3(x):
         return(np.sin(x) + PERTURBATION)
 
