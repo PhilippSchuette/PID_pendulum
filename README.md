@@ -37,6 +37,8 @@ from PID_pendulum.PID_control import Pendulum, PIDControl
 # see documentation for pendulum and controller methods
 ```
 
+The file `debug.py` contains examples for the usage of the Pendulum and AnimatedPendulum classes. To check basic features of the current build version, type `make doctest`.
+
 ## Web API and Demonstration
 An online demonstration of the PID pendulum controller implementation is [available here](https://pid-pendulum-demo.herokuapp.com/). To run the web app locally though, type:
 
