@@ -8,7 +8,7 @@
 # Date: 14/05/2019
 import numpy as np
 
-from PID_pendulum.PID_control import AnimatedPendulum, Pendulum
+from PID_control import AnimatedPendulum, Pendulum
 
 if __name__ == '__main__':
     # Set PID control parameters:

@@ -19,6 +19,8 @@
 # Date: 20/04/2019
 import matplotlib.pyplot as plt
 import numpy as np
+import os
+
 from matplotlib import animation
 
 
@@ -555,7 +557,11 @@ class Pendulum():
 
         plt.grid(True)
 
-        # Catch exception, if directory pics/ does not exist:
+        # If directory pics/ does not exist, make this directory:
+        if "pics" in os.listdir():
+            pass
+        else:
+            os.makedirs("pics")
         try:
             if parameter:
                 plt.savefig("pics/" + file_name + "_{}_{}_{}_1.png".format(
@@ -564,7 +570,7 @@ class Pendulum():
             else:
                 plt.savefig("pics/" + file_name + "_1.png")
         except FileNotFoundError:
-            print("Warning: Please create directory `pics' to save plots to.")
+            print("Warning: Please create directory `pics' to save animation.")
             exit(1)
 
         # Plot P, I, D and total control outputs together in one diagram:
@@ -636,6 +642,10 @@ class Pendulum():
         )
 
         # Saves with the formatting set up earlier:
+        if "pics" in os.listdir():
+            pass
+        else:
+            os.makedirs("pics")
         try:
             anim.save("pics/" + anim_name + ".mp4", writer=writer)
         except FileNotFoundError:
@@ -771,6 +781,10 @@ class AnimatedPendulum():
         )
 
         # Saves with the formatting set up earlier:
+        if "pics" in os.listdir():
+            pass
+        else:
+            os.makedirs("pics")
         try:
             anim.save("pics/" + anim_name + ".mp4", writer=writer)
         except FileNotFoundError:
