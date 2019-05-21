@@ -8,6 +8,9 @@
 # Date: 14/05/2019
 import numpy as np
 
+# Do not import from the installed package PID_pendulum.PID_control, as
+# this would not include recent changes and would therefore not yield
+# meaningful results for debugging the building process!
 from PID_control import AnimatedPendulum, Pendulum
 
 if __name__ == '__main__':
