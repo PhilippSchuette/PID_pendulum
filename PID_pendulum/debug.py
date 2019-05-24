@@ -54,6 +54,8 @@ if __name__ == '__main__':
     ode1 = Pendulum(t_start, t_end, N, f1, L=LENGTH)
     ode1.solve(phi0, phi0_dot, ALPHA, BETA, MU, MAX_CONTROL, FREQUENCY,
                DEADBAND, SET_POINT, PRECISION)
+    xy_coord = ode1.get_xy_coordinates()
+    print(xy_coord[:10])
     ode1.plot("nonlinearPID", parameter=True)
 
     ode2 = Pendulum(t_start, t_end, N, f2, L=LENGTH)

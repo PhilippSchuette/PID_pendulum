@@ -494,7 +494,7 @@ class Pendulum():
     def get_support_values(self):
         """
         A convenience method that returns the support values (== time
-        points)or an empty list if `solve` was never called on this
+        points) or an empty list if `solve` was never called on this
         pendulum.
 
         :output: array containing support values (floats)
@@ -503,6 +503,24 @@ class Pendulum():
             return self.t
         else:
             return []
+
+    def get_xy_coordinates(self):
+        """
+        A convenience method that returns the xy-coordinates
+        corresponding the pendulum angles phi or an empty list, if
+        `solve` was never called on the particular instance.
+
+        :output: array containing xy-coordinates (float pairs)
+        """
+        xy_coord = []
+
+        if hasattr(self, "phi"):
+            for i in range(len(self.phi)):
+                x = self.L * np.cos(self.phi[i])
+                y = self.L * np.sin(self.phi[i])
+                xy_coord.append([x, y])
+
+        return xy_coord
 
     def plot(self, file_name, parameter=False):
         """
