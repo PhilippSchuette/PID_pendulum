@@ -5,6 +5,14 @@
  * License: GPL-3.0
  * Date: 13/05/2019
  */
+/*
+ * TODO:
+ * - add input fields for pendulum parameters
+ * - bootstrap the website layout
+ * - add loading animation while data is not fetched from remote origin
+ * - save data to buffer and only fetch if absolutely necessary to reduce lag
+ * - make pendulum animation
+ */
 const baseURL = "https://pid-pendulum-demo.herokuapp.com"
 const APIRoute = "/api/v1/"
 const request = "?alpha=4.0&beta=1.5&mu=0.8&phi0=0.25&phi0_dot=0.25&max_control=3.0&frequency=10&deadband=0.01&set_point=0&precision=5&key=0&t_end=";
