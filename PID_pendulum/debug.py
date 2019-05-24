@@ -27,7 +27,7 @@ if __name__ == '__main__':
     t_start = 0.0
     t_end = 45.0
     N = 9000
-    LENGTH = 0.1
+    LENGTH = 10.0
 
     # Perturbation could perhaps be randomized; something like
     # (0.01*np.pi) seems to be a good value for this particular
@@ -64,13 +64,13 @@ if __name__ == '__main__':
     ode2.plot("linearPID", parameter=True)
 
     # Test pendulum animation features:
-    animatedpendulum = AnimatedPendulum(
-        phi0, phi0_dot, ALPHA, BETA, MU, MAX_CONTROL, FREQUENCY, DEADBAND,
-        SET_POINT, PRECISION, t_start=0.0, t_end=6.5, N=650, L=LENGTH, f=f1
-    )
-    animatedpendulum.animate("pendulum1")
+#    animatedpendulum = AnimatedPendulum(
+#        phi0, phi0_dot, ALPHA, BETA, MU, MAX_CONTROL, FREQUENCY, DEADBAND,
+#        SET_POINT, PRECISION, t_start=0.0, t_end=6.5, N=650, L=LENGTH, f=f1
+#    )
+#    animatedpendulum.animate("pendulum1")
 
-    pendulum1 = Pendulum(t_start=0, t_end=5, N=500, f=np.sin, L=LENGTH)
-    pendulum1.solve(phi0, phi0_dot, ALPHA, BETA, MU, MAX_CONTROL, FREQUENCY,
-                    DEADBAND, SET_POINT, PRECISION)
-    pendulum1.animate("pendulum2")
+#    pendulum1 = Pendulum(t_start=0, t_end=5, N=500, f=np.sin, L=LENGTH)
+#    pendulum1.solve(phi0, phi0_dot, ALPHA, BETA, MU, MAX_CONTROL, FREQUENCY,
+#                    DEADBAND, SET_POINT, PRECISION)
+#    pendulum1.animate("pendulum2")

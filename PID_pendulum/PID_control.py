@@ -232,7 +232,7 @@ class Pendulum():
     identity are the most reasonable choices.
     """
 
-    def __init__(self, t_start, t_end, N, f, L=0.1, G=9.81):
+    def __init__(self, t_start, t_end, N, f, L=10.0, G=9.81):
         """
         Initialize linear or nonlinear pendulum.
 
@@ -360,11 +360,17 @@ class Pendulum():
             )
             self.I_array.append(self.controller.integral)
 
-            # After this calculation, `tmp' contains the angle value phi[n+1]:
+            # After this calculation, `tmp' contains the angle value
+            # phi[n+1], reduced by 2*pi:
             tmp = (
-                2.0*self.phi[n] + self.L*self.G*self.f(self.phi[n])*self.h**2
+                2.0*self.phi[n] + (self.G/self.L)*self.f(self.phi[n])*self.h**2
                 - self.phi[n-1] + u_n*self.h**2
             )
+            while (tmp < -np.pi or tmp >= np.pi):
+                if tmp < -np.pi:
+                    tmp += 2*np.pi
+                else:
+                    tmp -= 2*np.pi
             self.phi.append(tmp)
 
     def solve_from_angles(self, phi0, phi1, alpha, beta, mu, max_control,
@@ -410,11 +416,11 @@ class Pendulum():
         >>> import numpy as np; from PID_control import *
         >>> ALPHA = 4.4; BETA = 2.0; MU = 1.2; MAX_CONTROL = 2.6
         >>> FREQUENCY = 30; DEADBAND = 0.01; SET_POINT = -0.0*np.pi
-        >>> PRECISION = 5; t_start = 0.0; t_end = 45.0; N = 9000; LENGTH = 0.1
+        >>> PRECISION = 5; t_start = 0.0; t_end = 45.0; N = 9000; LENGTH = 10.0
         >>> phi0 = 0.5 * np.pi; phi0_dot = 0.3 * np.pi
         >>> pendulum = Pendulum(t_start, t_end, N, np.sin, L=LENGTH)
         >>> pendulum
-        Inverted Pendulum of Length 0.1
+        Inverted Pendulum of Length 10.0
         >>> phi1 = phi0 + phi0_dot*pendulum.h
         >>> pendulum.solve(
         ... phi0, phi0_dot, ALPHA, BETA, MU, MAX_CONTROL, FREQUENCY, DEADBAND,
@@ -474,9 +480,16 @@ class Pendulum():
             self.I_array.append(self.controller.integral)
 
             # After the following calculation, tmp contains the entry
-            # phi[n + 1]:
-            tmp = (2.0*self.phi[n] + self.f(self.phi[n])*self.h**2
-                   - self.phi[n-1] + u_n*self.h**2)
+            # phi[n + 1], reduced modulo 2*pi:
+            tmp = (
+                2.0*self.phi[n] + (self.G/self.L)*self.f(self.phi[n])*self.h**2
+                - self.phi[n-1] + u_n*self.h**2
+            )
+            while (tmp < -np.pi or tmp >= np.pi):
+                if tmp < -np.pi:
+                    tmp += 2*np.pi
+                else:
+                    tmp -= 2*np.pi
             self.phi.append(tmp)
 
     def get_func_values(self):
