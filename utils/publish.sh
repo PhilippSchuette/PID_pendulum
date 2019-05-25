@@ -10,10 +10,10 @@ ANSI_RESET='\x1b[0m'
 DELIM='*--------------------*'
 
 if [[ -z "$1" ]]; then
-    echo -e "${ANSI_RED}Error: Provide a new version number as a parameter.\n${DELIM}${ANSI_RESET}"
+    echo -e "${ANSI_RED}Error: Provide a new version number as a parameter.${ANSI_RESET}"
     exit 1
 elif [[ "$1" != v*.*.* ]];then
-    echo -e "${ANSI_RED}Error: Version number must be in format 'vX.Y.Z'.\n${DELIM}${ANSI_RESET}"
+    echo -e "${ANSI_RED}Error: Version number must be in format 'vX.Y.Z'.${ANSI_RESET}"
     exit 1
 fi
 VERSION="$1"
