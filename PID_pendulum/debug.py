@@ -1,4 +1,4 @@
-#!/bin/python
+#!/bin/python3
 #
 # This file is intended for debugging of the classes and methods in
 # PID_control only!

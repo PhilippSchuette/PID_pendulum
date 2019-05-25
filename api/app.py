@@ -4,7 +4,7 @@
 # License: GPL-3.0
 # Date: 12/05/2019
 import numpy as np
-from flask import Flask, jsonify, request
+from flask import Flask, jsonify, render_template, request
 from PID_pendulum.PID_control import Pendulum
 
 app = Flask(__name__, static_url_path="/static")
@@ -17,7 +17,8 @@ def api():
     """
     An API wrapper around the `PID_pendulum' module. Optional and required
     parameters can be seen below. Refer to in-line documentation for more
-    implementation details. Unreasonable values do *not* result in errors.
+    implementation details. Unreasonable values do *not* result in errors
+    but unreasonable output.
     """
     required = [
         "alpha", "beta", "mu", "phi0", "phi0_dot", "max_control",
@@ -71,28 +72,29 @@ def api():
 
 # the following routes serve static web pages for the actual web app
 @app.route("/")
+@app.route("/home")
 def home():
-    return app.send_static_file("index.html")
+    return render_template("index.html", navbar="home")
 
 
 @app.route("/about")
 def about():
-    return app.send_static_file("about.html")
+    return render_template("about.html", navbar="about")
 
 
 @app.route("/bibliography")
 def bibliography():
-    return app.send_static_file("bibliography.html")
+    return render_template("bibliography.html", navbar="bibliography")
 
 
 @app.route("/license")
 def license():
-    return app.send_static_file("license.html")
+    return render_template("license.html", navbar="dropdown")
 
 
 @app.route("/contribute")
 def contribute():
-    return app.send_static_file("contribute.html")
+    return render_template("contribute.html", navbar="dropdown")
 
 
 if __name__ == "__main__":

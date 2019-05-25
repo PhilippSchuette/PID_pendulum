@@ -12,6 +12,7 @@ help:
 
 all:
 	flake8 PID_pendulum/PID_control.py
+	flake8 PID_pendulum/debug.py
 	sudo python3 setup.py sdist bdist_wheel
 
 docs:
