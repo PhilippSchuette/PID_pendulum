@@ -18,7 +18,7 @@ if __name__ == '__main__':
     ALPHA = 4.4
     BETA = 2.0
     MU = 1.2
-    MAX_CONTROL = 2.6
+    MAX_CONTROL = 3.2
     FREQUENCY = 30
     DEADBAND = 0.01
     SET_POINT = -0.0 * np.pi
@@ -44,7 +44,7 @@ if __name__ == '__main__':
     def f3(x):
         return(np.sin(x) + PERTURBATION)
 
-    phi0 = 0.5 * np.pi
+    phi0 = 0.9 * np.pi
     phi0_dot = 0.3 * np.pi
 
     # After specifying all necessary data, the Pendulum class solves the

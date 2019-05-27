@@ -102,20 +102,29 @@ class PIDControl():
             self.alpha, self.beta, self.mu
         ))
 
-    def total_output(self, x1, x2, t1, t2, precision=4):
+    def total_output(self, x1, x2, x1mod, x2mod, t1, t2, precision=4):
         """
-        Method returning the total controller output in response to system
-        value x at time t.  The output is bounded by the max_control attribute
-        and controller adjustment speed is bounded by the frequency attribute.
-        Controller does not adjust, if successive outputs differ by less than
-        the deadband attribute. Limited measurement precision is included by
-        rounding controller input.
+        Method returning the total controller output in response to
+        system value x at time t.  The output is bounded by the
+        max_control attribute and controller adjustment speed is bounded
+        by the frequency attribute.  Controller does not adjust, if
+        successive outputs differ by less than the deadband attribute.
+        Limited measurement precision is included by rounding controller
+        input.  The angle reduction modulo 2*pi for the pendulum is
+        accounted for by additional parameter x1mod, x2mod, which are
+        necessary for consistent derivative calculations.
 
         :type x1: float
         :param x1: system value at time t1
 
         :type x2: float
         :param x2: system value at time t2
+
+        :type x1mod: float
+        :param x1mod: unreduced system value at time t1
+
+        :type x2mod: float
+        :param x2mod: unreduced system value at time t2
 
         :type t1: float
         :param t1: last time point
@@ -131,10 +140,14 @@ class PIDControl():
         if (self.action == 0):
             control_value = (
                 self.proportional_output(np.round(x2, precision), t2)
-                + self.derivative_output(np.round(x1, precision),
-                                         np.round(x2, precision), t1, t2)
-                + self.integral_output(np.round(x1, precision),
-                                       np.round(x2, precision), t1, t2)
+                + self.derivative_output(
+                    np.round(x1mod, precision), np.round(x2mod, precision),
+                    t1, t2
+                )
+                + self.integral_output(
+                    np.round(x1, precision), np.round(x2, precision),
+                    t1, t2
+                )
             )
             if (np.abs(control_value - self.output) >= self.deadband):
                 if (control_value > self.max_control):
@@ -265,7 +278,7 @@ class Pendulum():
         self.G = G
 
         # Calculate time step width:
-        self.h = (self.t_end - self.t_start)/self.N
+        self.h = (self.t_end - self.t_start)/float(self.N)
         # Define array with time support points:
         self.t = [(self.t_start + i*self.h) for i in range(self.N + 1)]
 
@@ -318,9 +331,26 @@ class Pendulum():
         """
         self.phi0 = phi0
         self.phi0_dot = phi0_dot
+        self.phi1 = self.phi0 + self.phi0_dot * self.h
 
-        # Initialize solution array with given initial data:
-        self.phi = [self.phi0, self.phi0 + self.phi0_dot * self.h]
+        # Define private array to keep track of angle values before the
+        # reduction modulo 2*pi:
+        self._phi = [self.phi0, self.phi1]
+
+        # Initialize solution array with given initial data reduced
+        # modulo 2*pi:
+        while (self.phi0 < -np.pi or self.phi0 >= np.pi):
+            if self.phi0 < -np.pi:
+                self.phi0 += 2*np.pi
+            else:
+                self.phi0 -= 2*np.pi
+        while (self.phi1 < -np.pi or self.phi1 >= np.pi):
+            if self.phi1 < -np.pi:
+                self.phi1 += 2*np.pi
+            else:
+                self.phi1 -= 2*np.pi
+        self.phi = [self.phi0, self.phi1]
+
         self.output_array = [0, 0]
         self.P_array = [0, 0]
         self.I_array = [0, 0]
@@ -337,16 +367,25 @@ class Pendulum():
         self.precision = precision
 
         # Create an instance of a PIDControl:
-        self.controller = PIDControl(self.alpha, self.beta, self.mu,
-                                     self.frequency, self.max_control,
-                                     self.set_point, self.deadband)
+        self.controller = PIDControl(
+            self.alpha, self.beta, self.mu, self.frequency, self.max_control,
+            self.set_point, self.deadband
+        )
 
         # Integrate the controlled ODE:
         for n in range(1, self.N):
             # Calculate the current control value:
-            u_n = self.controller.total_output(self.phi[n-1], self.phi[n],
-                                               self.t[n-1], self.t[n],
-                                               precision=self.precision)
+            u_n = self.controller.total_output(
+                self.phi[n-1], self.phi[n], self._phi[n-1], self._phi[n],
+                self.t[n-1], self.t[n], precision=self.precision
+            )
+
+            # The linearization does not make sense beyond a rough
+            # estimate of abs(phi) <= 0.065*np.pi:
+            if abs(self.phi[n]) > 0.065*np.pi:
+                self.f = np.sin
+            else:
+                self.f = (lambda x: x)
 
             # Save control values for control value plot:
             self.output_array.append(u_n)
@@ -355,17 +394,20 @@ class Pendulum():
             )
             self.D_array.append(
                 self.controller.derivative_output(
-                    self.phi[n-1], self.phi[n], self.t[n-1], self.t[n]
+                    self._phi[n-1], self._phi[n], self.t[n-1], self.t[n]
                 )
             )
             self.I_array.append(self.controller.integral)
 
             # After this calculation, `tmp' contains the angle value
-            # phi[n+1], reduced by 2*pi:
+            # phi[n+1], which still has to be reduced by 2*pi:
             tmp = (
-                2.0*self.phi[n] + (self.G/self.L)*self.f(self.phi[n])*self.h**2
-                - self.phi[n-1] + u_n*self.h**2
+                2.0*self._phi[n]
+                + (self.G/self.L)*self.f(self._phi[n])*self.h**2
+                - self._phi[n-1] + u_n*self.h**2
             )
+            self._phi.append(tmp)
+
             while (tmp < -np.pi or tmp >= np.pi):
                 if tmp < -np.pi:
                     tmp += 2*np.pi
@@ -438,8 +480,24 @@ class Pendulum():
         self.phi0 = phi0
         self.phi1 = phi1
 
-        # Initialize solution array with given initial angles:
+        # Define private array to keep track of angle values before the
+        # reduction modulo 2*pi:
+        self._phi = [self.phi0, self.phi1]
+
+        # Initialize solution array with given initial data reduced
+        # modulo 2*pi:
+        while (self.phi0 < -np.pi or self.phi0 >= np.pi):
+            if self.phi0 < -np.pi:
+                self.phi0 += 2*np.pi
+            else:
+                self.phi0 -= 2*np.pi
+        while (self.phi1 < -np.pi or self.phi1 >= np.pi):
+            if self.phi1 < -np.pi:
+                self.phi1 += 2*np.pi
+            else:
+                self.phi1 -= 2*np.pi
         self.phi = [self.phi0, self.phi1]
+
         self.output_array = [0, 0]
         self.P_array = [0, 0]
         self.I_array = [0, 0]
@@ -456,16 +514,25 @@ class Pendulum():
         self.precision = precision
 
         # Create an instance of a PIDControl:
-        self.controller = PIDControl(self.alpha, self.beta, self.mu,
-                                     self.frequency, self.max_control,
-                                     self.set_point, self.deadband)
+        self.controller = PIDControl(
+            self.alpha, self.beta, self.mu, self.frequency, self.max_control,
+            self.set_point, self.deadband
+        )
 
         # Integrate the controlled ODE:
         for n in range(1, self.N):
             # Calculate the current control value:
-            u_n = self.controller.total_output(self.phi[n-1], self.phi[n],
-                                               self.t[n-1], self.t[n],
-                                               precision=self.precision)
+            u_n = self.controller.total_output(
+                self.phi[n-1], self.phi[n], self._phi[n-1], self._phi[n],
+                self.t[n-1], self.t[n], precision=self.precision
+            )
+
+            # The linearization does not make sense beyond a rough
+            # estimate of abs(phi) <= 0.065*np.pi:
+            if abs(self.phi[n]) > 0.065*np.pi:
+                self.f = np.sin
+            else:
+                self.f = (lambda x: x)
 
             # Save control values for control value plot:
             self.output_array.append(u_n)
@@ -474,7 +541,7 @@ class Pendulum():
             )
             self.D_array.append(
                 self.controller.derivative_output(
-                    self.phi[n-1], self.phi[n], self.t[n-1], self.t[n]
+                    self._phi[n-1], self._phi[n], self.t[n-1], self.t[n]
                 )
             )
             self.I_array.append(self.controller.integral)
@@ -482,14 +549,18 @@ class Pendulum():
             # After the following calculation, tmp contains the entry
             # phi[n + 1], reduced modulo 2*pi:
             tmp = (
-                2.0*self.phi[n] + (self.G/self.L)*self.f(self.phi[n])*self.h**2
-                - self.phi[n-1] + u_n*self.h**2
+                2.0*self._phi[n]
+                + (self.G/self.L)*self.f(self._phi[n])*self.h**2
+                - self._phi[n-1] + u_n*self.h**2
             )
+            self._phi.append(tmp)
             while (tmp < -np.pi or tmp >= np.pi):
                 if tmp < -np.pi:
                     tmp += 2*np.pi
+                    self.set_point -= 2*np.pi
                 else:
                     tmp -= 2*np.pi
+                    self.set_point -= 2*np.pi
             self.phi.append(tmp)
 
     def get_func_values(self):
@@ -499,8 +570,8 @@ class Pendulum():
 
         :output: array containing angle solution values (floats)
         """
-        if hasattr(self, "phi"):
-            return self.phi
+        if hasattr(self, "_phi"):
+            return self._phi
         else:
             return []
 
@@ -527,10 +598,10 @@ class Pendulum():
         """
         xy_coord = []
 
-        if hasattr(self, "phi"):
+        if hasattr(self, "_phi"):
             for i in range(len(self.phi)):
-                x = self.L * np.cos(self.phi[i])
-                y = self.L * np.sin(self.phi[i])
+                x = self.L * np.cos(self._phi[i])
+                y = self.L * np.sin(self._phi[i])
                 xy_coord.append([x, y])
 
         return xy_coord
@@ -556,7 +627,7 @@ class Pendulum():
         # Plot time dependencies of system, i.e. angle phi, and control
         # output:
         plt.figure()
-        plt.plot(self.t, self.phi, "g-", label="Pendulum Angle")
+        plt.plot(self.t, self._phi, "g-", label="Pendulum Angle")
 
         # Try to fit the correct name to the kind of pendulum
         # integrated.  This fails to make sense, if self.f is anything
@@ -664,7 +735,7 @@ class Pendulum():
         # Define the function, that is animated, from pendulum solution data:
         def animate(i):
             x = self.t[:i]
-            y = self.phi[:i]
+            y = self._phi[:i]
             line.set_data(x, y)
             return line,
 
