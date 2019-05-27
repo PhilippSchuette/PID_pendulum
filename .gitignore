@@ -108,3 +108,8 @@ venv.bak/
 
 # pics folder
 pics/
+
+# node-related files and dirs
+node_modules/
+package.json
+package-lock.json
