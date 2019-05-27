@@ -1,7 +1,7 @@
 #!/bin/python
 from setuptools import find_packages, setup
 
-version = "v0.0.11"
+version = "v0.0.12"
 description = "Visit https://github.com/PhilippSchuette/PID_pendulum for" \
     " additional information."
 

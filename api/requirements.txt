@@ -1,4 +1,4 @@
 numpy==1.16.0
 flask==1.0.2
 gunicorn==19.9.0
-PID-pendulum==0.0.10
+PID-pendulum==v0.0.12

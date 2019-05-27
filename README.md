@@ -2,6 +2,7 @@
 
 ![PyPI](https://img.shields.io/pypi/v/PID_pendulum.svg)
 ![PyPI - Wheel](https://img.shields.io/pypi/wheel/PID_pendulum.svg)
+[![Web App - Demo](https://img.shields.io/badge/web--app-available-success.svg)](https://pid-pendulum-demo.herokuapp.com/)
 
 ## Overview
 This is a short description of the PID controlled pendulum project. The project illustrates several concepts of real-world PID controllers, that theoretical descriptions often disregard. At the moment this includes

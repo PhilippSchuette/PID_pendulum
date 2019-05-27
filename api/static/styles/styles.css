@@ -1,3 +1,23 @@
+/* general styles */
+.sized-2x {
+    font-size: 1.3rem;
+}
+
+.spaced-2x {
+    margin: 2rem;
+}
+
+.icon {
+    text-decoration: none;
+    color: #000;
+    margin: 0 1.2rem;
+}
+
+.icon:hover {
+    color: #777;
+}
+
+/* index page graph styles */
 .body__regular-paragraph {
     font-size: 1.1rem;
 }
@@ -19,4 +39,11 @@
 
 .background-colored {
     background-color: #fff !important; /* #fff is Bootstrap's bg color */
+}
+
+/* footer styles */
+.__footer_ruler {
+    margin: 24px;
+    border-radius: 5px;
+    border: 2px solid black;
 }

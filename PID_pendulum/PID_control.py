@@ -1,4 +1,4 @@
-#!/bin/python
+#!/bin/python3
 #
 # PID control for inverted pendulum. Control is implemented as a class,
 # such that other systems/ODE can be controlled without much additional
@@ -17,10 +17,10 @@
 # Author: Philipp Schuette
 # License: GPL-3.0
 # Date: 20/04/2019
-import matplotlib.pyplot as plt
-import numpy as np
 import os
 
+import matplotlib.pyplot as plt
+import numpy as np
 from matplotlib import animation
 
 
@@ -591,7 +591,7 @@ class Pendulum():
     def get_xy_coordinates(self):
         """
         A convenience method that returns the xy-coordinates
-        corresponding the pendulum angles phi or an empty list, if
+        corresponding to the pendulum angles phi or an empty list, if
         `solve` was never called on the particular instance.
 
         :output: array containing xy-coordinates (float pairs)
