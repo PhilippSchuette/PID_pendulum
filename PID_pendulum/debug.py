@@ -34,15 +34,9 @@ if __name__ == '__main__':
     # parameter set.
     PERTURBATION = 0.0 * np.pi
 
-    f1 = np.sin
+    func1 = "nonlinear"
 
-    def f2(x):
-        return(x + PERTURBATION)
-
-    # The following is an unused prototype for a perturbed nonlinear
-    # pendulum:
-    def f3(x):
-        return(np.sin(x) + PERTURBATION)
+    func2 = "linear"
 
     phi0 = 0.9 * np.pi
     phi0_dot = 0.3 * np.pi
@@ -51,14 +45,14 @@ if __name__ == '__main__':
     # ODE within three statements:  creation of an appropriate Pendulum
     # instance, a call to the solve() method and a call to the plot()
     # method:
-    ode1 = Pendulum(t_start, t_end, N, f1, L=LENGTH)
+    ode1 = Pendulum(t_start, t_end, N, func1, L=LENGTH)
     ode1.solve(phi0, phi0_dot, ALPHA, BETA, MU, MAX_CONTROL, FREQUENCY,
                DEADBAND, SET_POINT, PRECISION)
     xy_coord = ode1.get_xy_coordinates()
     print(xy_coord[:10])
     ode1.plot("nonlinearPID", parameter=True)
 
-    ode2 = Pendulum(t_start, t_end, N, f2, L=LENGTH)
+    ode2 = Pendulum(t_start, t_end, N, func2, L=LENGTH)
     ode2.solve(phi0, phi0_dot, ALPHA, BETA, MU, MAX_CONTROL, FREQUENCY,
                DEADBAND, SET_POINT, PRECISION)
     ode2.plot("linearPID", parameter=True)

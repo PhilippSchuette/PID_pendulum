@@ -245,7 +245,7 @@ class Pendulum():
     identity are the most reasonable choices.
     """
 
-    def __init__(self, t_start, t_end, N, f, L=10.0, G=9.81):
+    def __init__(self, t_start, t_end, N, func, L=10.0, G=9.81):
         """
         Initialize linear or nonlinear pendulum.
 
@@ -258,8 +258,9 @@ class Pendulum():
         :type N: int > 0
         :param N: number of numerical support points for ODE solving
 
-        :type f: function
-        :param f: right hand side for the second order pendulum ODE
+        :type func: string
+        :param func: right hand side for the second order pendulum ODE,
+                     available options are "linear" or "nonlinear"
 
         :type L: float
         :param L: pendulum length parameter in [m]
@@ -273,7 +274,16 @@ class Pendulum():
         self.t_start = t_start
         self.t_end = t_end
         self.N = N
-        self.f = f
+        if func == "linear":
+            self.f = lambda x: x
+        elif func == "nonlinear":
+            self.f = np.sin
+        else:
+            print(
+                "Pendulum type must be either linear or nonlinear! "
+                + "Default type linear was chosen!"
+            )
+            self.f = lambda x: x
         self.L = L
         self.G = G
 
