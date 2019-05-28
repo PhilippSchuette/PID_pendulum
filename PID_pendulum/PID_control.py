@@ -83,12 +83,12 @@ class PIDControl():
         self.set_point = set_point
         self.deadband = deadband
 
-        # Attribute to memorize the previous or latest change in controller
-        # output:
+        # Attribute to memorize the previous or latest change in
+        # controller output:
         self.output = 0
 
-        # Attribute to memorize the integral control value up to the current
-        # time:
+        # Attribute to memorize the integral control value up to the
+        # current time:
         self.integral = 0
 
         # Attribute to keep track of controller speed:
@@ -162,8 +162,8 @@ class PIDControl():
 
     def proportional_output(self, x, t):
         """
-        Method returning the proportional or I controller output, depending on
-        the controller attribute alpha.
+        Method returning the proportional or I controller output,
+        depending on the controller attribute alpha.
 
         :type x: float
         :param x: system value at time t
@@ -179,9 +179,9 @@ class PIDControl():
 
     def derivative_output(self, x1, x2, t1, t2):
         """
-        Method returning the derivative or D controller output, depending
-        on the attribute beta.  A numerical approximation of the
-        derivative value is necessary to compute the ouput.  The
+        Method returning the derivative or D controller output,
+        depending on the attribute beta.  A numerical approximation of
+        the derivative value is necessary to compute the ouput.  The
         trapezoid rule was chosen for that.
 
         :type x1: float
@@ -204,9 +204,9 @@ class PIDControl():
 
     def integral_output(self, x1, x2, t1, t2):
         """
-        Method returning the integral or I controller output, depending on the
-        controller attribute mu.  A numerical approximation of the integral
-        value is necessary to compute the output.
+        Method returning the integral or I controller output, depending
+        on the controller attribute mu.  A numerical approximation of
+        the integral value is necessary to compute the output.
 
         :type x1: float
         :param x1: system value at time t1
@@ -234,9 +234,9 @@ class PIDControl():
 ##################################
 class Pendulum():
     """
-    Class implementation of a simple ODE solver for the inverted pendulum.
-    Intended to be used in conjunction with the PIDControl class.  The solved
-    ODE is of the form x''(t) = f(x(t)) + u(t).
+    Class implementation of a simple ODE solver for the inverted
+    pendulum.  Intended to be used in conjunction with the PIDControl
+    class.  The solved ODE is of the form x''(t) = f(x(t)) + u(t).
 
     Initialize with time parameters t_start, t_end, number of support
     points N.  Initial values are given to the solve method for
@@ -336,6 +336,38 @@ class Pendulum():
 
         :output: numerically calculates the attributes (float arrays)
                  phi, output_array, P_array, I_array and D_array
+
+        >>> import numpy as np; from PID_control import *
+        >>> ALPHA = 4.4; BETA = 2.0; MU = 1.2; MAX_CONTROL = 2.6
+        >>> FREQUENCY = 30; DEADBAND = 0.01; SET_POINT = -0.0*np.pi
+        >>> PRECISION = 5; t_start = 0.0; t_end = 45.0; N = 9000; LENGTH = 10.0
+        >>> phi0 = 0.5 * np.pi; phi0_dot = 0.3 * np.pi
+        >>> pendulum = Pendulum(t_start, t_end, N, "nonlinear", L=LENGTH)
+        >>> pendulum.solve(
+        ... phi0, phi0_dot, ALPHA, BETA, MU, MAX_CONTROL, FREQUENCY, DEADBAND,
+        ... SET_POINT, PRECISION
+        ... )
+        >>> abs(pendulum._phi[0] - phi0) < 1e-8
+        True
+        >>> phi1 = phi0 + phi0_dot*pendulum.h
+        >>> abs(pendulum._phi[1] - phi1) < 1e-8
+        True
+        >>> controller = PIDControl(
+        ... ALPHA, BETA, MU, FREQUENCY, MAX_CONTROL, SET_POINT, DEADBAND
+        ... )
+        >>> u0 = controller.proportional_output(phi0, t_start)
+        >>> abs(u0 - (-ALPHA*phi0)) < 1e-8
+        True
+        >>> u1 = controller.derivative_output(
+        ... phi0, phi1, t_start, t_start + pendulum.h
+        ... )
+        >>> abs(u1 - (-BETA*(phi1 - phi0)/(pendulum.h))) < 1e-8
+        True
+        >>> u2 = controller.integral_output(
+        ... phi0, phi1, t_start, t_start + pendulum.h
+        ... )
+        >>> abs(u2 - (-MU*(phi0 + phi1)*pendulum.h/2.0)) < 1e-8
+        True
         """
         self.phi0 = phi0
         self.phi0_dot = phi0_dot
@@ -618,10 +650,11 @@ class Pendulum():
 
     def plot(self, file_name, parameter=False):
         """
-        Method to plot solutions generated with Pendulum class.  One needs to
-        call the solve() method, before plot() can be called.  PID Parameters
-        can be written in the filename.  This might be useful for numerical
-        experiments with several distinct sets of parameters.
+        Method to plot solutions generated with Pendulum class.  One
+        needs to call the solve() method, before plot() can be called.
+        PID parameters can be written in the filename.  This might be
+        useful for numerical experiments with several distinct sets of
+        parameters.
 
         :type file_name: string
         :param file_name: name for the .png file, in which the solution
@@ -742,7 +775,8 @@ class Pendulum():
             line.set_data([], [])
             return line,
 
-        # Define the function, that is animated, from pendulum solution data:
+        # Define the function, that is animated, from pendulum solution
+        # data:
         def animate(i):
             x = self.t[:i]
             y = self._phi[:i]
@@ -778,7 +812,7 @@ class AnimatedPendulum():
     """
 
     def __init__(self, phi0, phi0_dot, alpha, beta, mu, max_control, frequency,
-                 deadband, set_point, precision, t_start, t_end, N, L, f):
+                 deadband, set_point, precision, t_start, t_end, N, L, func):
         """
         :type phi0: float
         :param phi0: initial angle value
@@ -823,8 +857,9 @@ class AnimatedPendulum():
         :type L: float > 0
         :param L: pendulum length
 
-        :type f: function
-        :param f: right hand side for pendulum ODE
+        :type func: string
+        :param f: right hand side for pendulum ODE, available are either
+                  "linear" or "nonlinear"
 
         :output: Creates an instance of a pendulum, waiting to be
                  animated
@@ -839,11 +874,19 @@ class AnimatedPendulum():
         self.deadband = deadband
         self.set_point = set_point
         self.precision = precision
+
         self.t_start = t_start
         self.t_end = t_end
         self.N = N
         self.L = L
-        self.f = f
+        if func == "linear":
+            self.f = lambda x: x
+        elif func == "nonlinear":
+            self.f = np.sin
+        else:
+            print("Pendulum type must be either linear or nonlinear!")
+            print("Default type linear was chosen!")
+            self.f = lambda x: x
 
     def animate(self, anim_name):
         """
