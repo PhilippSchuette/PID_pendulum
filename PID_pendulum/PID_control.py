@@ -279,10 +279,8 @@ class Pendulum():
         elif func == "nonlinear":
             self.f = np.sin
         else:
-            print(
-                "Pendulum type must be either linear or nonlinear! "
-                + "Default type linear was chosen!"
-            )
+            print("Pendulum type must be either linear or nonlinear!")
+            print("Default type linear was chosen!")
             self.f = lambda x: x
         self.L = L
         self.G = G
@@ -471,6 +469,8 @@ class Pendulum():
         >>> PRECISION = 5; t_start = 0.0; t_end = 45.0; N = 9000; LENGTH = 10.0
         >>> phi0 = 0.5 * np.pi; phi0_dot = 0.3 * np.pi
         >>> pendulum = Pendulum(t_start, t_end, N, np.sin, L=LENGTH)
+        Pendulum type must be either linear or nonlinear!
+        Default type linear was chosen!
         >>> pendulum
         Inverted Pendulum of Length 10.0
         >>> phi1 = phi0 + phi0_dot*pendulum.h
