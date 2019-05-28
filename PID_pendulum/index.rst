@@ -1,16 +1,21 @@
 .. PID_control documentation master file, created by
-   sphinx-quickstart on Mon May 13 12:29:33 2019.
-   You can adapt this file completely to your liking, but it should at least
-   contain the root `toctree` directive.
+.. sphinx-quickstart on Mon May 13 12:29:33 2019.
+.. You can adapt this file completely to your liking, but it should at least
+.. contain the root `toctree` directive.
 
 Welcome to PID_control's documentation!
 =======================================
 
 .. toctree::
    :maxdepth: 2
-   :caption: Contents:
+   :numbered:
+   :caption: Table of Contents:
 
-.. PID_control.py
+   intro
+
+
+PID_control Main Module
+=======================
 
 .. automodule:: PID_control
    :members:
@@ -19,10 +24,6 @@ Welcome to PID_control's documentation!
    :undoc-members:
 
 
+.. raw:: latex
+    :file: refs.tex
 
-Indices and tables
-==================
-
-* :ref:`genindex`
-* :ref:`modindex`
-* :ref:`search`

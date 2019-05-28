@@ -139,7 +139,7 @@ latex_elements = {
 #  author, documentclass [howto, manual, or own class]).
 latex_documents = [
     (master_doc, 'PID_control.tex', u'PID\\_control Documentation',
-     u'Philipp Schuette, Daniel Schuette', 'manual'),
+     u'Philipp Schuette, Daniel Schuette', 'manual')
 ]
 
 
