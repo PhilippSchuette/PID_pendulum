@@ -290,6 +290,10 @@ class Pendulum():
         # Define array with time support points:
         self.t = [(self.t_start + i*self.h) for i in range(self.N + 1)]
 
+        # Initialize the solution arrays:
+        self.phi = []
+        self._phi = []
+
     def __repr__(self):
         """
         Return string representation of inverted pendulum.
@@ -459,7 +463,7 @@ class Pendulum():
                           frequency, deadband, set_point, precision):
         """
         Method solving the ODE for given numerical initial conditions,
-        i.e. two initial angles.  Works exactly like the solve() method.
+        i.e. two initial angles.  Works exactly like the `solve` method.
 
         :type phi0: float
         :param phi0: first initial value
@@ -612,9 +616,9 @@ class Pendulum():
 
         :output: array containing angle solution values (floats)
         """
-        if hasattr(self, "_phi"):
+        try:
             return self._phi
-        else:
+        except AttributeError:
             return []
 
     def get_support_values(self):
@@ -625,9 +629,9 @@ class Pendulum():
 
         :output: array containing support values (floats)
         """
-        if hasattr(self, "t"):
+        try:
             return self.t
-        else:
+        except AttributeError:
             return []
 
     def get_xy_coordinates(self):
@@ -640,18 +644,20 @@ class Pendulum():
         """
         xy_coord = []
 
-        if hasattr(self, "_phi"):
-            for i in range(len(self.phi)):
+        try:
+            for i in range(len(self._phi)):
                 x = self.L * np.cos(self._phi[i])
                 y = self.L * np.sin(self._phi[i])
                 xy_coord.append([x, y])
+        except AttributeError:
+            print("Solve pendulum ODE before trying to plot time development.")
 
         return xy_coord
 
     def plot(self, file_name, parameter=False):
         """
         Method to plot solutions generated with Pendulum class.  One
-        needs to call the solve() method, before plot() can be called.
+        needs to call the `solve` method, before `plot` can be called.
         PID parameters can be written in the filename.  This might be
         useful for numerical experiments with several distinct sets of
         parameters.
@@ -750,7 +756,7 @@ class Pendulum():
     def animate(self, anim_name):
         """
         Method to animate solutions generated with Pendulum class.  One
-        needs to call the solve() method, before plot() makes sense.
+        needs to call the `solve` method, before `plot` makes sense.
 
         :type anim_name: string
         :param anim_name: name for the mp4 file, in which the animation
@@ -805,10 +811,10 @@ class Pendulum():
 class AnimatedPendulum():
     """
     Class especially tailored to creating, solving and finally animating
-    a controlled inverted pendulum. While the Pendulum class method
-    animate() can be called after solving the pendulum ODE with solve(),
-    the AnimatedPendulum class wraps these steps. Simply create an
-    instance and call the animate() method.
+    a controlled inverted pendulum.  While the Pendulum class method
+    `animate` can be called after solving the pendulum ODE with `solve`,
+    the AnimatedPendulum class wraps these steps.  Simply create an
+    instance and call the `animate` method.
     """
 
     def __init__(self, phi0, phi0_dot, alpha, beta, mu, max_control, frequency,
@@ -916,7 +922,7 @@ class AnimatedPendulum():
             return line,
 
         # Initialize pendulum, this differentiations AnimatedPendulum
-        # method animate() from Pendulum method animate():
+        # method `animate` from Pendulum method `animate`:
         pendulum = Pendulum(self.t_start, self.t_end, self.N, self.f, self.L)
         pendulum.solve(
             self.phi0, self.phi0_dot, self.alpha, self.beta, self.mu,
