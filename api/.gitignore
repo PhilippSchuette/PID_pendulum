@@ -1,1 +1,10 @@
 __pycache__/
+
+# node-related files and dirs
+node_modules/
+package.json
+package-lock.json
+
+# js linters
+.eslintrc.json
+.jshintrc
